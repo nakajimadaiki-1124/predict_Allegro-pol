@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 from pathlib import Path
 
-package_names = ["nequip", "pol"]
+package_names = ["allegro", "pol"]
 _name = "_".join(package_names)
 name = "-".join(package_names)
 
