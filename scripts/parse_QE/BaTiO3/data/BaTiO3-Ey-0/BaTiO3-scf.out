@@ -1,0 +1,1299 @@
+
+     Program PWSCF v.7.1 starts on 25Jan2024 at  9:42:16 
+
+     This program is part of the open-source Quantum ESPRESSO suite
+     for quantum simulation of materials; please cite
+         "P. Giannozzi et al., J. Phys.:Condens. Matter 21 395502 (2009);
+         "P. Giannozzi et al., J. Phys.:Condens. Matter 29 465901 (2017);
+         "P. Giannozzi et al., J. Chem. Phys. 152 154105 (2020);
+          URL http://www.quantum-espresso.org", 
+     in publications or presentations arising from this work. More details at
+     http://www.quantum-espresso.org/quote
+
+     Parallel version (MPI), running on   112 processors
+
+     MPI processes distributed on     1 nodes
+     1006392 MiB available memory on the printing compute node when the environment starts
+
+     Reading input from /n/holyscratch01/kozinsky_lab/sfalletta/QE/BaTiO3/BaTiO3-Ey-0/BaTiO3-scf.inp
+
+     Current dimensions of program PWSCF are:
+     Max number of different atomic species (ntypx) = 10
+     Max number of k-points (npk) =  40000
+     Max angular momentum in pseudopotentials (lmaxx) =  4
+
+     IMPORTANT: XC functional enforced from input :
+     Exchange-correlation= PBE
+                           (   1   4   3   4   0   0   0)
+     Any further DFT definition will be discarded
+     Please, verify this is what you really want
+
+
+     R & G space division:  proc/nbgrp/npool/nimage =     112
+     Subspace diagonalization in iterative solution of the eigenvalue problem:
+     one sub-group per band group will be used
+     scalapack distributed-memory algorithm (size of sub-group: 10* 10 procs)
+
+
+     Parallelization info
+     --------------------
+     sticks:   dense  smooth     PW     G-vecs:    dense   smooth      PW
+     Min         287     143     35                42083    14875    1853
+     Max         288     144     36                42090    14884    1864
+     Sum       32201   16101   4017              4713475  1666415  208381
+
+     Using Slab Decomposition
+
+
+
+     bravais-lattice index     =            8
+     lattice parameter (alat)  =      22.4844  a.u.
+     unit-cell volume          =   12335.5658 (a.u.)^3
+     number of atoms/cell      =          135
+     number of atomic types    =            3
+     number of electrons       =      1080.00
+     number of Kohn-Sham states=          550
+     kinetic-energy cutoff     =     100.0000  Ry
+     charge density cutoff     =     800.0000  Ry
+     scf convergence threshold =      1.0E-08
+     mixing beta               =       0.7000
+     number of iterations used =            8  plain     mixing
+     Exchange-correlation= PBE
+                           (   1   4   3   4   0   0   0)
+
+     Using Berry phase electric field
+     In a.u.(Ry)  cartesian system of reference
+        0.0000000000
+        0.0001000000
+        0.0000000000
+     In a.u.(Ry)  crystal system of reference
+        0.0000000000
+        0.0001000000
+        0.0000000000
+     Number of iterative cycles:   1
+
+
+     celldm(1)=  22.484440  celldm(2)=   1.000000  celldm(3)=   1.085208
+     celldm(4)=   0.000000  celldm(5)=   0.000000  celldm(6)=   0.000000
+
+     crystal axes: (cart. coord. in units of alat)
+               a(1) = (   1.000000   0.000000   0.000000 )  
+               a(2) = (   0.000000   1.000000   0.000000 )  
+               a(3) = (   0.000000   0.000000   1.085208 )  
+
+     reciprocal axes: (cart. coord. in units 2 pi/alat)
+               b(1) = (  1.000000  0.000000  0.000000 )  
+               b(2) = (  0.000000  1.000000  0.000000 )  
+               b(3) = (  0.000000  0.000000  0.921483 )  
+
+
+     PseudoPot. # 1 for Ba read from file:
+     /n/holyscratch01/kozinsky_lab/sfalletta/QE/Inputs/Ba.upf
+     MD5 check sum: d1993ebf099ea5c29fdb9ecc5bd2bc91
+     Pseudo is Norm-conserving + core correction, Zval = 10.0
+     Generated using ONCVPSP code by D. R. Hamann
+     Using radial grid of 1958 points,  6 beta functions with: 
+                l(1) =   0
+                l(2) =   0
+                l(3) =   1
+                l(4) =   1
+                l(5) =   2
+                l(6) =   2
+
+     PseudoPot. # 2 for Ti read from file:
+     /n/holyscratch01/kozinsky_lab/sfalletta/QE/Inputs/Ti.upf
+     MD5 check sum: 0b3868d933a8ea9356727c02a1b807de
+     Pseudo is Norm-conserving + core correction, Zval = 12.0
+     Generated using ONCVPSP code by D. R. Hamann
+     Using radial grid of 1586 points,  6 beta functions with: 
+                l(1) =   0
+                l(2) =   0
+                l(3) =   1
+                l(4) =   1
+                l(5) =   2
+                l(6) =   2
+
+     PseudoPot. # 3 for O  read from file:
+     /n/holyscratch01/kozinsky_lab/sfalletta/QE/Inputs/O.upf
+     MD5 check sum: e161f86cb4953fdc9aae83e76c3f29b8
+     Pseudo is Norm-conserving + core correction, Zval =  6.0
+     Generated using ONCVPSP code by D. R. Hamann
+     Using radial grid of  936 points,  5 beta functions with: 
+                l(1) =   0
+                l(2) =   0
+                l(3) =   1
+                l(4) =   1
+                l(5) =   2
+
+     atomic species   valence    mass     pseudopotential
+        Ba            10.00   137.32700     Ba( 1.00)
+        Ti            12.00    47.90000     Ti( 1.00)
+        O              6.00    15.99900     O ( 1.00)
+
+     No symmetry found
+
+
+
+   Cartesian axes
+
+     site n.     atom                  positions (alat units)
+         1           Ba  tau(   1) = (   0.1671100   0.1666366   0.0066311  )
+         2           Ba  tau(   2) = (   0.1661381   0.1670119   0.3676971  )
+         3           Ba  tau(   3) = (   0.1659578   0.1668603   0.7287679  )
+         4           Ba  tau(   4) = (   0.1659012   0.4993308   0.0063206  )
+         5           Ba  tau(   5) = (   0.1664560   0.4995451   0.3676626  )
+         6           Ba  tau(   6) = (   0.1662392   0.5006403   0.7296442  )
+         7           Ba  tau(   7) = (   0.1663484   0.8330388   0.0066455  )
+         8           Ba  tau(   8) = (   0.1670837   0.8326971   0.3672552  )
+         9           Ba  tau(   9) = (   0.1663140   0.8336942   0.7296110  )
+        10           Ba  tau(  10) = (   0.4994594   0.1667972   0.0064742  )
+        11           Ba  tau(  11) = (   0.4996638   0.1662977   0.3680782  )
+        12           Ba  tau(  12) = (   0.4994775   0.1673545   0.7302039  )
+        13           Ba  tau(  13) = (   0.4999590   0.5007581   0.0051661  )
+        14           Ba  tau(  14) = (   0.4999213   0.4995552   0.3672442  )
+        15           Ba  tau(  15) = (   0.5001697   0.5001384   0.7301216  )
+        16           Ba  tau(  16) = (   0.5003124   0.8325296   0.0062827  )
+        17           Ba  tau(  17) = (   0.4995536   0.8328925   0.3673754  )
+        18           Ba  tau(  18) = (   0.4993503   0.8332585   0.7293004  )
+        19           Ba  tau(  19) = (   0.8326000   0.1665611   0.0055600  )
+        20           Ba  tau(  20) = (   0.8330152   0.1668609   0.3677644  )
+        21           Ba  tau(  21) = (   0.8334447   0.1672913   0.7293456  )
+        22           Ba  tau(  22) = (   0.8341135   0.5005527   0.0066809  )
+        23           Ba  tau(  23) = (   0.8337037   0.4995026   0.3680627  )
+        24           Ba  tau(  24) = (   0.8337396   0.5002605   0.7287913  )
+        25           Ba  tau(  25) = (   0.8326523   0.8329781   0.0052388  )
+        26           Ba  tau(  26) = (   0.8333698   0.8334970   0.3674128  )
+        27           Ba  tau(  27) = (   0.8326296   0.8328897   0.7291536  )
+        28           Ti  tau(  28) = (  -0.0002944  -0.0004341   0.1930358  )
+        29           Ti  tau(  29) = (   0.0005339   0.0003599   0.5540189  )
+        30           Ti  tau(  30) = (  -0.0006437  -0.0000752   0.9163041  )
+        31           Ti  tau(  31) = (  -0.0001429   0.3325461   0.1930055  )
+        32           Ti  tau(  32) = (   0.0005401   0.3332356   0.5542220  )
+        33           Ti  tau(  33) = (  -0.0000310   0.3339478   0.9157437  )
+        34           Ti  tau(  34) = (  -0.0003082   0.6669509   0.1919022  )
+        35           Ti  tau(  35) = (   0.0004670   0.6665449   0.5540213  )
+        36           Ti  tau(  36) = (  -0.0007861   0.6667452   0.9158596  )
+        37           Ti  tau(  37) = (   0.3331564   0.0006305   0.1933256  )
+        38           Ti  tau(  38) = (   0.3339072   0.0000636   0.5545303  )
+        39           Ti  tau(  39) = (   0.3335423  -0.0003706   0.9155909  )
+        40           Ti  tau(  40) = (   0.3326456   0.3337351   0.1927905  )
+        41           Ti  tau(  41) = (   0.3327798   0.3341128   0.5552228  )
+        42           Ti  tau(  42) = (   0.3329930   0.3333140   0.9161723  )
+        43           Ti  tau(  43) = (   0.3327123   0.6658410   0.1934319  )
+        44           Ti  tau(  44) = (   0.3327961   0.6660726   0.5540454  )
+        45           Ti  tau(  45) = (   0.3330722   0.6660356   0.9161118  )
+        46           Ti  tau(  46) = (   0.6665356   0.0006411   0.1927262  )
+        47           Ti  tau(  47) = (   0.6659765  -0.0001386   0.5550344  )
+        48           Ti  tau(  48) = (   0.6666418   0.0001201   0.9160040  )
+        49           Ti  tau(  49) = (   0.6669289   0.3341030   0.1930877  )
+        50           Ti  tau(  50) = (   0.6661130   0.3333293   0.5544685  )
+        51           Ti  tau(  51) = (   0.6659645   0.3339459   0.9155774  )
+        52           Ti  tau(  52) = (   0.6658367   0.6659632   0.1921498  )
+        53           Ti  tau(  53) = (   0.6661177   0.6669611   0.5551561  )
+        54           Ti  tau(  54) = (   0.6659414   0.6662498   0.9162308  )
+        55           O   tau(  55) = (  -0.0007040   0.1672087   0.1717149  )
+        56           O   tau(  56) = (   0.1670547   0.0000960   0.1717505  )
+        57           O   tau(  57) = (  -0.0003949   0.0000949   0.3429300  )
+        58           O   tau(  58) = (   0.0004525   0.1658581   0.5331034  )
+        59           O   tau(  59) = (   0.1660687  -0.0006806   0.5339075  )
+        60           O   tau(  60) = (   0.0008093   0.0005566   0.7045392  )
+        61           O   tau(  61) = (   0.0006012   0.1673561   0.8949166  )
+        62           O   tau(  62) = (   0.1667602   0.0007598   0.8944347  )
+        63           O   tau(  63) = (  -0.0000283   0.0002129  -0.0188335  )
+        64           O   tau(  64) = (  -0.0003092   0.4999940   0.1719229  )
+        65           O   tau(  65) = (   0.1666266   0.3338783   0.1709318  )
+        66           O   tau(  66) = (   0.0001530   0.3338834   0.3431665  )
+        67           O   tau(  67) = (   0.0007569   0.4994914   0.5322643  )
+        68           O   tau(  68) = (   0.1671089   0.3337822   0.5329753  )
+        69           O   tau(  69) = (   0.0008194   0.3329541   0.7060437  )
+        70           O   tau(  70) = (  -0.0006815   0.5001059   0.8955176  )
+        71           O   tau(  71) = (   0.1658525   0.3331579   0.8952219  )
+        72           O   tau(  72) = (   0.0002919   0.3337933  -0.0189841  )
+        73           O   tau(  73) = (  -0.0006494   0.8341510   0.1721391  )
+        74           O   tau(  74) = (   0.1668949   0.6662115   0.1712315  )
+        75           O   tau(  75) = (   0.0004685   0.6659047   0.3440964  )
+        76           O   tau(  76) = (   0.0008155   0.8331225   0.5326480  )
+        77           O   tau(  77) = (   0.1668718   0.6670475   0.5326227  )
+        78           O   tau(  78) = (   0.0001164   0.6661732   0.7056145  )
+        79           O   tau(  79) = (   0.0001121   0.8329350   0.8944615  )
+        80           O   tau(  80) = (   0.1662124   0.6673528   0.8950724  )
+        81           O   tau(  81) = (   0.0003821   0.6664132  -0.0177097  )
+        82           O   tau(  82) = (   0.3334811   0.1669512   0.1705411  )
+        83           O   tau(  83) = (   0.4995825  -0.0006902   0.1716273  )
+        84           O   tau(  84) = (   0.3335538   0.0001921   0.3433332  )
+        85           O   tau(  85) = (   0.3329424   0.1665877   0.5325337  )
+        86           O   tau(  86) = (   0.4996340   0.0001968   0.5322624  )
+        87           O   tau(  87) = (   0.3338418  -0.0007805   0.7049410  )
+        88           O   tau(  88) = (   0.3327493   0.1670922   0.8948304  )
+        89           O   tau(  89) = (   0.4999682  -0.0003195   0.8951004  )
+        90           O   tau(  90) = (   0.3338891   0.0002062  -0.0182431  )
+        91           O   tau(  91) = (   0.3329836   0.4998811   0.1719213  )
+        92           O   tau(  92) = (   0.4992197   0.3331254   0.1706845  )
+        93           O   tau(  93) = (   0.3333344   0.3330068   0.3434756  )
+        94           O   tau(  94) = (   0.3331741   0.5000777   0.5337099  )
+        95           O   tau(  95) = (   0.4997119   0.3332241   0.5337004  )
+        96           O   tau(  96) = (   0.3329727   0.3325281   0.7060194  )
+        97           O   tau(  97) = (   0.3331901   0.4992070   0.8955836  )
+        98           O   tau(  98) = (   0.4995936   0.3330674   0.8945848  )
+        99           O   tau(  99) = (   0.3335105   0.3337117  -0.0189051  )
+       100           O   tau( 100) = (   0.3329950   0.8340597   0.1715049  )
+       101           O   tau( 101) = (   0.4992848   0.6674036   0.1719417  )
+       102           O   tau( 102) = (   0.3330995   0.6669653   0.3431007  )
+       103           O   tau( 103) = (   0.3330931   0.8340476   0.5335025  )
+       104           O   tau( 104) = (   0.5006730   0.6672876   0.5334783  )
+       105           O   tau( 105) = (   0.3339969   0.6672322   0.7050987  )
+       106           O   tau( 106) = (   0.3330621   0.8329436   0.8945359  )
+       107           O   tau( 107) = (   0.5006300   0.6659157   0.8954456  )
+       108           O   tau( 108) = (   0.3325391   0.6674643  -0.0177212  )
+       109           O   tau( 109) = (   0.6664817   0.1667355   0.1721656  )
+       110           O   tau( 110) = (   0.8332812   0.0007949   0.1719160  )
+       111           O   tau( 111) = (   0.6664598   0.0002429   0.3433622  )
+       112           O   tau( 112) = (   0.6672108   0.1661486   0.5326402  )
+       113           O   tau( 113) = (   0.8327649   0.0005576   0.5334719  )
+       114           O   tau( 114) = (   0.6659076   0.0006287   0.7045569  )
+       115           O   tau( 115) = (   0.6672234   0.1673091   0.8946162  )
+       116           O   tau( 116) = (   0.8327416   0.0005994   0.8941808  )
+       117           O   tau( 117) = (   0.6675022  -0.0001499  -0.0188493  )
+       118           O   tau( 118) = (   0.6672377   0.5007753   0.1710123  )
+       119           O   tau( 119) = (   0.8336340   0.3338919   0.1715897  )
+       120           O   tau( 120) = (   0.6660799   0.3333953   0.3426547  )
+       121           O   tau( 121) = (   0.6661172   0.4995041   0.5330041  )
+       122           O   tau( 122) = (   0.8338468   0.3339323   0.5337947  )
+       123           O   tau( 123) = (   0.6664057   0.3340090   0.7054331  )
+       124           O   tau( 124) = (   0.6658890   0.5007119   0.8953304  )
+       125           O   tau( 125) = (   0.8332987   0.3334326   0.8952174  )
+       126           O   tau( 126) = (   0.6665677   0.3338898  -0.0177124  )
+       127           O   tau( 127) = (   0.6673090   0.8339934   0.1706790  )
+       128           O   tau( 128) = (   0.8336815   0.6662267   0.1721913  )
+       129           O   tau( 129) = (   0.6665079   0.6664644   0.3439900  )
+       130           O   tau( 130) = (   0.6665797   0.8326032   0.5339298  )
+       131           O   tau( 131) = (   0.8330184   0.6670267   0.5330141  )
+       132           O   tau( 132) = (   0.6674656   0.6666378   0.7049422  )
+       133           O   tau( 133) = (   0.6665895   0.8338098   0.8950555  )
+       134           O   tau( 134) = (   0.8334946   0.6658271   0.8944904  )
+       135           O   tau( 135) = (   0.6663896   0.6670366  -0.0187856  )
+
+     number of k points=     1
+                       cart. coord. in units 2pi/alat
+        k(    1) = (   0.0000000   0.0000000   0.0000000), wk =   2.0000000
+
+     Dense  grid:  4713475 G-vectors     FFT dimensions: ( 216, 216, 225)
+
+     Smooth grid:  1666415 G-vectors     FFT dimensions: ( 144, 144, 160)
+
+     Estimated max dynamical RAM per process >     189.27 MB
+
+     Estimated total dynamical RAM >      20.70 GB
+
+     Initial potential from superposition of free atoms
+
+     starting charge    1079.5099, renormalised to    1080.0000
+     Starting wfcs are  729 randomized atomic wfcs
+
+     total cpu time spent up to now is       14.4 secs
+
+     Self-consistent Calculation
+
+     iteration #  1     ecut=   100.00 Ry     beta= 0.70
+     Davidson diagonalization with overlap
+     ethr =  1.00E-02,  avg # of iterations =  2.0
+
+     Expectation value of exp(iGx):   (6.38855624432548025E-006,2.16378543506071420E-006)   1.0000000000000000     
+     Electronic Dipole per cell (Ry a.u.)   3.3053973331191004     
+     Ionic Dipole per cell (Ry a.u.)   13732.067592490663     
+
+     Expectation value of exp(iGx):  (6.59784733913397737E-006,-1.38595079075995092E-006)   1.0000000000000000     
+     Electronic Dipole per cell (Ry a.u.)  -2.0956745366985636     
+     Ionic Dipole per cell (Ry a.u.)   13738.241707995414     
+
+     Expectation value of exp(iGx):   (2.66300482168333046E-006,3.78597313949143843E-005)   1.0852077191500298     
+     Electronic Dipole per cell (Ry a.u.)   16.482279406787530     
+     Ionic Dipole per cell (Ry a.u.)   16131.253304506745     
+Electronic Dipole on Cartesian axes
+           1   3.3053973331191004     
+           2  -2.0956745366985636     
+           3   16.482279406787530     
+Ionic Dipole on Cartesian axes
+           1   13732.067592490663     
+           2   13738.241707995414     
+           3   16131.253304506745     
+
+     total cpu time spent up to now is     1611.7 secs
+
+     total energy              =   -7391.58001539 Ry
+     estimated scf accuracy    <      51.97361334 Ry
+
+     iteration #  2     ecut=   100.00 Ry     beta= 0.70
+     Davidson diagonalization with overlap
+     ethr =  4.81E-03,  avg # of iterations = 12.0
+
+     Expectation value of exp(iGx):   (1.14901509813081391E-025,2.14428106467755204E-026)   1.0000000000000000     
+     Electronic Dipole per cell (Ry a.u.)   1.8673941387366195     
+     Ionic Dipole per cell (Ry a.u.)   13732.067592490663     
+
+     Expectation value of exp(iGx): (-1.72896193871331532E-025,-1.39023052424563116E-024)   1.0000000000000000     
+     Electronic Dipole per cell (Ry a.u.)  -17.151237894053338     
+     Ionic Dipole per cell (Ry a.u.)   13738.241707995414     
+
+     Expectation value of exp(iGx):  (2.57187983306694693E-022,-1.64957840514240146E-021)   1.0852077191500298     
+     Electronic Dipole per cell (Ry a.u.)  -15.554757573794197     
+     Ionic Dipole per cell (Ry a.u.)   16131.253304506745     
+Electronic Dipole on Cartesian axes
+           1   1.8673941387366195     
+           2  -17.151237894053338     
+           3  -15.554757573794197     
+Ionic Dipole on Cartesian axes
+           1   13732.067592490663     
+           2   13738.241707995414     
+           3   16131.253304506745     
+
+     total cpu time spent up to now is     3277.9 secs
+
+     total energy              =   -7341.70277055 Ry
+     estimated scf accuracy    <     509.98329469 Ry
+
+     iteration #  3     ecut=   100.00 Ry     beta= 0.70
+     Davidson diagonalization with overlap
+     ethr =  4.81E-03,  avg # of iterations = 10.0
+
+     Expectation value of exp(iGx):   (1.30877736568864691E-007,4.19134652642448241E-008)   1.0000000000000000     
+     Electronic Dipole per cell (Ry a.u.)   3.1369611105393282     
+     Ionic Dipole per cell (Ry a.u.)   13732.067592490663     
+
+     Expectation value of exp(iGx):  (1.32620415910127534E-007,-2.99248945932847768E-008)   1.0000000000000000     
+     Electronic Dipole per cell (Ry a.u.)  -2.2462416540646175     
+     Ionic Dipole per cell (Ry a.u.)   13738.241707995414     
+
+     Expectation value of exp(iGx): (-1.17681164898011560E-006,-3.80899554744670392E-007)   1.0852077191500298     
+     Electronic Dipole per cell (Ry a.u.)  -31.068908138324595     
+     Ionic Dipole per cell (Ry a.u.)   16131.253304506745     
+Electronic Dipole on Cartesian axes
+           1   3.1369611105393282     
+           2  -2.2462416540646175     
+           3  -31.068908138324598     
+Ionic Dipole on Cartesian axes
+           1   13732.067592490663     
+           2   13738.241707995414     
+           3   16131.253304506745     
+
+     total cpu time spent up to now is     4925.3 secs
+
+     total energy              =   -7420.81640992 Ry
+     estimated scf accuracy    <       9.81350034 Ry
+
+     iteration #  4     ecut=   100.00 Ry     beta= 0.70
+     Davidson diagonalization with overlap
+     ethr =  9.09E-04,  avg # of iterations =  9.0
+
+     Expectation value of exp(iGx):   (2.96360750624403528E-007,9.47902943718191526E-008)   1.0000000000000000     
+     Electronic Dipole per cell (Ry a.u.)   3.1332763429570902     
+     Ionic Dipole per cell (Ry a.u.)   13732.067592490663     
+
+     Expectation value of exp(iGx):  (3.02593190196927950E-007,-6.30601380013777731E-008)   1.0000000000000000     
+     Electronic Dipole per cell (Ry a.u.)  -2.0795581255061069     
+     Ionic Dipole per cell (Ry a.u.)   13738.241707995414     
+
+     Expectation value of exp(iGx): (-2.65532882992511719E-006,-4.01417250582824929E-007)   1.0852077191500298     
+     Electronic Dipole per cell (Ry a.u.)  -32.859200251185058     
+     Ionic Dipole per cell (Ry a.u.)   16131.253304506745     
+Electronic Dipole on Cartesian axes
+           1   3.1332763429570902     
+           2  -2.0795581255061069     
+           3  -32.859200251185058     
+Ionic Dipole on Cartesian axes
+           1   13732.067592490663     
+           2   13738.241707995414     
+           3   16131.253304506745     
+
+     total cpu time spent up to now is     6543.9 secs
+
+     total energy              =   -7420.54983295 Ry
+     estimated scf accuracy    <       4.64661677 Ry
+
+     iteration #  5     ecut=   100.00 Ry     beta= 0.70
+     Davidson diagonalization with overlap
+     ethr =  4.30E-04,  avg # of iterations =  3.0
+
+     Expectation value of exp(iGx):   (3.08731349085469868E-007,9.82803668832999283E-008)   1.0000000000000000     
+     Electronic Dipole per cell (Ry a.u.)   3.1193917622309386     
+     Ionic Dipole per cell (Ry a.u.)   13732.067592490663     
+
+     Expectation value of exp(iGx):  (3.15044705639207446E-007,-6.51008841375864711E-008)   1.0000000000000000     
+     Electronic Dipole per cell (Ry a.u.)  -2.0624901596407437     
+     Ionic Dipole per cell (Ry a.u.)   13738.241707995414     
+
+     Expectation value of exp(iGx): (-2.76101731158944189E-006,-9.18249876162054906E-007)   1.0852077191500298     
+     Electronic Dipole per cell (Ry a.u.)  -30.980594924342526     
+     Ionic Dipole per cell (Ry a.u.)   16131.253304506745     
+Electronic Dipole on Cartesian axes
+           1   3.1193917622309386     
+           2  -2.0624901596407437     
+           3  -30.980594924342526     
+Ionic Dipole on Cartesian axes
+           1   13732.067592490663     
+           2   13738.241707995414     
+           3   16131.253304506745     
+
+     total cpu time spent up to now is     8171.5 secs
+
+     total energy              =   -7419.90095571 Ry
+     estimated scf accuracy    <       2.40178452 Ry
+
+     iteration #  6     ecut=   100.00 Ry     beta= 0.70
+     Davidson diagonalization with overlap
+     c_bands:  1 eigenvalues not converged
+     ethr =  2.22E-04,  avg # of iterations = 20.0
+
+     Expectation value of exp(iGx):   (1.78493008208278028E-007,5.49753294980690611E-008)   1.0000000000000000     
+     Electronic Dipole per cell (Ry a.u.)   3.0240909736101491     
+     Ionic Dipole per cell (Ry a.u.)   13732.067592490663     
+
+     Expectation value of exp(iGx):  (1.80640692694889687E-007,-3.69789802383942103E-008)   1.0000000000000000     
+     Electronic Dipole per cell (Ry a.u.)  -2.0437482542114096     
+     Ionic Dipole per cell (Ry a.u.)   13738.241707995414     
+
+     Expectation value of exp(iGx): (-1.02160819898916336E-006,-1.68445617062106929E-006)   1.0852077191500298     
+     Electronic Dipole per cell (Ry a.u.)  -23.241847686548930     
+     Ionic Dipole per cell (Ry a.u.)   16131.253304506745     
+Electronic Dipole on Cartesian axes
+           1   3.0240909736101491     
+           2  -2.0437482542114096     
+           3  -23.241847686548930     
+Ionic Dipole on Cartesian axes
+           1   13732.067592490663     
+           2   13738.241707995414     
+           3   16131.253304506745     
+
+     total cpu time spent up to now is     9906.3 secs
+
+     total energy              =   -7420.36838339 Ry
+     estimated scf accuracy    <       0.05591795 Ry
+
+     iteration #  7     ecut=   100.00 Ry     beta= 0.70
+     Davidson diagonalization with overlap
+     c_bands:  4 eigenvalues not converged
+     ethr =  5.18E-06,  avg # of iterations = 20.0
+
+     Expectation value of exp(iGx):   (1.46480755496653174E-007,4.51448907610188852E-008)   1.0000000000000000     
+     Electronic Dipole per cell (Ry a.u.)   3.0259363940577058     
+     Ionic Dipole per cell (Ry a.u.)   13732.067592490663     
+
+     Expectation value of exp(iGx):  (1.51291114113212112E-007,-3.00827925708759257E-008)   1.0000000000000000     
+     Electronic Dipole per cell (Ry a.u.)  -1.9866621961458488     
+     Ionic Dipole per cell (Ry a.u.)   13738.241707995414     
+
+     Expectation value of exp(iGx): (-4.67235139896481502E-007,-1.71792651392955178E-006)   1.0852077191500298     
+     Electronic Dipole per cell (Ry a.u.)  -20.170438051069208     
+     Ionic Dipole per cell (Ry a.u.)   16131.253304506745     
+Electronic Dipole on Cartesian axes
+           1   3.0259363940577058     
+           2  -1.9866621961458488     
+           3  -20.170438051069208     
+Ionic Dipole on Cartesian axes
+           1   13732.067592490663     
+           2   13738.241707995414     
+           3   16131.253304506745     
+
+     total cpu time spent up to now is    11602.9 secs
+
+     total energy              =   -7420.43614470 Ry
+     estimated scf accuracy    <       0.01789814 Ry
+
+     iteration #  8     ecut=   100.00 Ry     beta= 0.70
+     Davidson diagonalization with overlap
+     c_bands:  1 eigenvalues not converged
+     ethr =  1.66E-06,  avg # of iterations = 20.0
+
+     Expectation value of exp(iGx):   (1.45889731620639114E-007,4.49086162356991718E-008)   1.0000000000000000     
+     Electronic Dipole per cell (Ry a.u.)   3.0225068170088494     
+     Ionic Dipole per cell (Ry a.u.)   13732.067592490663     
+
+     Expectation value of exp(iGx):  (1.50167840307581513E-007,-2.97665258952111575E-008)   1.0000000000000000     
+     Electronic Dipole per cell (Ry a.u.)  -1.9806370925643457     
+     Ionic Dipole per cell (Ry a.u.)   13738.241707995414     
+
+     Expectation value of exp(iGx): (-4.93930416328966265E-007,-1.72184292913495030E-006)   1.0852077191500298     
+     Electronic Dipole per cell (Ry a.u.)  -20.322095134392086     
+     Ionic Dipole per cell (Ry a.u.)   16131.253304506745     
+Electronic Dipole on Cartesian axes
+           1   3.0225068170088494     
+           2  -1.9806370925643457     
+           3  -20.322095134392086     
+Ionic Dipole on Cartesian axes
+           1   13732.067592490663     
+           2   13738.241707995414     
+           3   16131.253304506745     
+
+     total cpu time spent up to now is    13233.6 secs
+
+     total energy              =   -7420.43562891 Ry
+     estimated scf accuracy    <       0.01015038 Ry
+
+     iteration #  9     ecut=   100.00 Ry     beta= 0.70
+     Davidson diagonalization with overlap
+     c_bands:  1 eigenvalues not converged
+     ethr =  9.40E-07,  avg # of iterations = 20.0
+
+     Expectation value of exp(iGx):   (1.49068509864696564E-007,4.59109966129816093E-008)   1.0000000000000000     
+     Electronic Dipole per cell (Ry a.u.)   3.0239872440811237     
+     Ionic Dipole per cell (Ry a.u.)   13732.067592490663     
+
+     Expectation value of exp(iGx):  (1.52973044851969062E-007,-3.03732064903681151E-008)   1.0000000000000000     
+     Electronic Dipole per cell (Ry a.u.)  -1.9838600862307378     
+     Ionic Dipole per cell (Ry a.u.)   13738.241707995414     
+
+     Expectation value of exp(iGx): (-5.30908338015834686E-007,-1.73996810251303047E-006)   1.0852077191500298     
+     Electronic Dipole per cell (Ry a.u.)  -20.506541764152669     
+     Ionic Dipole per cell (Ry a.u.)   16131.253304506745     
+Electronic Dipole on Cartesian axes
+           1   3.0239872440811237     
+           2  -1.9838600862307378     
+           3  -20.506541764152669     
+Ionic Dipole on Cartesian axes
+           1   13732.067592490663     
+           2   13738.241707995414     
+           3   16131.253304506745     
+
+     total cpu time spent up to now is    14863.8 secs
+
+     total energy              =   -7420.43551858 Ry
+     estimated scf accuracy    <       0.00422352 Ry
+
+     iteration # 10     ecut=   100.00 Ry     beta= 0.70
+     Davidson diagonalization with overlap
+     c_bands:  1 eigenvalues not converged
+     ethr =  3.91E-07,  avg # of iterations = 20.0
+
+     Expectation value of exp(iGx):   (1.54144806299305040E-007,4.75833997608161384E-008)   1.0000000000000000     
+     Electronic Dipole per cell (Ry a.u.)   3.0305216190664370     
+     Ionic Dipole per cell (Ry a.u.)   13732.067592490663     
+
+     Expectation value of exp(iGx):  (1.58076449381861729E-007,-3.12958190382922251E-008)   1.0000000000000000     
+     Electronic Dipole per cell (Ry a.u.)  -1.9782733715117193     
+     Ionic Dipole per cell (Ry a.u.)   13738.241707995414     
+
+     Expectation value of exp(iGx): (-6.28674071253252450E-007,-1.76391938302067339E-006)   1.0852077191500298     
+     Electronic Dipole per cell (Ry a.u.)  -21.014214363727117     
+     Ionic Dipole per cell (Ry a.u.)   16131.253304506745     
+Electronic Dipole on Cartesian axes
+           1   3.0305216190664370     
+           2  -1.9782733715117193     
+           3  -21.014214363727117     
+Ionic Dipole on Cartesian axes
+           1   13732.067592490663     
+           2   13738.241707995414     
+           3   16131.253304506745     
+
+     total cpu time spent up to now is    16500.7 secs
+
+     total energy              =   -7420.43644924 Ry
+     estimated scf accuracy    <       0.00052707 Ry
+
+     iteration # 11     ecut=   100.00 Ry     beta= 0.70
+     Davidson diagonalization with overlap
+     c_bands:  1 eigenvalues not converged
+     ethr =  4.88E-08,  avg # of iterations = 20.0
+
+     Expectation value of exp(iGx):   (1.55890812694639765E-007,4.81587613469651642E-008)   1.0000000000000000     
+     Electronic Dipole per cell (Ry a.u.)   3.0326781404593173     
+     Ionic Dipole per cell (Ry a.u.)   13732.067592490663     
+
+     Expectation value of exp(iGx):  (1.59919971455130912E-007,-3.16208693956799173E-008)   1.0000000000000000     
+     Electronic Dipole per cell (Ry a.u.)  -1.9758414540912141     
+     Ionic Dipole per cell (Ry a.u.)   13738.241707995414     
+
+     Expectation value of exp(iGx): (-6.62515605080086195E-007,-1.76700310244784793E-006)   1.0852077191500298     
+     Electronic Dipole per cell (Ry a.u.)  -21.193738991572388     
+     Ionic Dipole per cell (Ry a.u.)   16131.253304506745     
+Electronic Dipole on Cartesian axes
+           1   3.0326781404593173     
+           2  -1.9758414540912141     
+           3  -21.193738991572388     
+Ionic Dipole on Cartesian axes
+           1   13732.067592490663     
+           2   13738.241707995414     
+           3   16131.253304506745     
+
+     total cpu time spent up to now is    18137.4 secs
+
+     total energy              =   -7420.43661121 Ry
+     estimated scf accuracy    <       0.00061782 Ry
+
+     iteration # 12     ecut=   100.00 Ry     beta= 0.70
+     Davidson diagonalization with overlap
+     c_bands:  1 eigenvalues not converged
+     ethr =  4.88E-08,  avg # of iterations = 20.0
+
+     Expectation value of exp(iGx):   (1.55910746983159987E-007,4.81721474895928521E-008)   1.0000000000000000     
+     Electronic Dipole per cell (Ry a.u.)   3.0331064836815314     
+     Ionic Dipole per cell (Ry a.u.)   13732.067592490663     
+
+     Expectation value of exp(iGx):  (1.59986469126241309E-007,-3.16258099210686066E-008)   1.0000000000000000     
+     Electronic Dipole per cell (Ry a.u.)  -1.9753417070125734     
+     Ionic Dipole per cell (Ry a.u.)   13738.241707995414     
+
+     Expectation value of exp(iGx): (-6.63422887981714135E-007,-1.76580358466846016E-006)   1.0852077191500298     
+     Electronic Dipole per cell (Ry a.u.)  -21.201137963497196     
+     Ionic Dipole per cell (Ry a.u.)   16131.253304506745     
+Electronic Dipole on Cartesian axes
+           1   3.0331064836815314     
+           2  -1.9753417070125734     
+           3  -21.201137963497196     
+Ionic Dipole on Cartesian axes
+           1   13732.067592490663     
+           2   13738.241707995414     
+           3   16131.253304506745     
+
+     total cpu time spent up to now is    19774.2 secs
+
+     total energy              =   -7420.43655003 Ry
+     estimated scf accuracy    <       0.00055951 Ry
+
+     iteration # 13     ecut=   100.00 Ry     beta= 0.70
+     Davidson diagonalization with overlap
+     c_bands:  1 eigenvalues not converged
+     ethr =  4.88E-08,  avg # of iterations = 20.0
+
+     Expectation value of exp(iGx):   (1.55632656453223664E-007,4.80768868768279575E-008)   1.0000000000000000     
+     Electronic Dipole per cell (Ry a.u.)   3.0325520856357455     
+     Ionic Dipole per cell (Ry a.u.)   13732.067592490663     
+
+     Expectation value of exp(iGx):  (1.59693485372375045E-007,-3.15863408725094136E-008)   1.0000000000000000     
+     Electronic Dipole per cell (Ry a.u.)  -1.9764669287247230     
+     Ionic Dipole per cell (Ry a.u.)   13738.241707995414     
+
+     Expectation value of exp(iGx): (-6.56442897708129755E-007,-1.76482821718790388E-006)   1.0852077191500298     
+     Electronic Dipole per cell (Ry a.u.)  -21.165023471655001     
+     Ionic Dipole per cell (Ry a.u.)   16131.253304506745     
+Electronic Dipole on Cartesian axes
+           1   3.0325520856357455     
+           2  -1.9764669287247230     
+           3  -21.165023471655001     
+Ionic Dipole on Cartesian axes
+           1   13732.067592490663     
+           2   13738.241707995414     
+           3   16131.253304506745     
+
+     total cpu time spent up to now is    21369.0 secs
+
+     total energy              =   -7420.43647755 Ry
+     estimated scf accuracy    <       0.00035894 Ry
+
+     iteration # 14     ecut=   100.00 Ry     beta= 0.70
+     Davidson diagonalization with overlap
+     c_bands:  1 eigenvalues not converged
+     ethr =  3.32E-08,  avg # of iterations = 20.0
+
+     Expectation value of exp(iGx):   (1.55023782607459792E-007,4.78781516610306055E-008)   1.0000000000000000     
+     Electronic Dipole per cell (Ry a.u.)   3.0319175187373384     
+     Ionic Dipole per cell (Ry a.u.)   13732.067592490663     
+
+     Expectation value of exp(iGx):  (1.59111757351606600E-007,-3.14700955706809345E-008)   1.0000000000000000     
+     Electronic Dipole per cell (Ry a.u.)  -1.9763944923663193     
+     Ionic Dipole per cell (Ry a.u.)   13738.241707995414     
+
+     Expectation value of exp(iGx): (-6.44709566740392261E-007,-1.76292988303254763E-006)   1.0852077191500298     
+     Electronic Dipole per cell (Ry a.u.)  -21.104545310681996     
+     Ionic Dipole per cell (Ry a.u.)   16131.253304506745     
+Electronic Dipole on Cartesian axes
+           1   3.0319175187373384     
+           2  -1.9763944923663193     
+           3  -21.104545310681996     
+Ionic Dipole on Cartesian axes
+           1   13732.067592490663     
+           2   13738.241707995414     
+           3   16131.253304506745     
+
+     total cpu time spent up to now is    22994.2 secs
+
+     total energy              =   -7420.43647797 Ry
+     estimated scf accuracy    <       0.00011013 Ry
+
+     iteration # 15     ecut=   100.00 Ry     beta= 0.70
+     Davidson diagonalization with overlap
+     c_bands:  1 eigenvalues not converged
+     ethr =  1.02E-08,  avg # of iterations = 20.0
+
+     Expectation value of exp(iGx):   (1.53814897355346681E-007,4.74957721632672060E-008)   1.0000000000000000     
+     Electronic Dipole per cell (Ry a.u.)   3.0313754888046662     
+     Ionic Dipole per cell (Ry a.u.)   13732.067592490663     
+
+     Expectation value of exp(iGx):  (1.57908963359468090E-007,-3.12342328531966420E-008)   1.0000000000000000     
+     Electronic Dipole per cell (Ry a.u.)  -1.9765199103760043     
+     Ionic Dipole per cell (Ry a.u.)   13738.241707995414     
+
+     Expectation value of exp(iGx): (-6.21828339280753425E-007,-1.75866526452066161E-006)   1.0852077191500298     
+     Electronic Dipole per cell (Ry a.u.)  -20.986630200221331     
+     Ionic Dipole per cell (Ry a.u.)   16131.253304506745     
+Electronic Dipole on Cartesian axes
+           1   3.0313754888046662     
+           2  -1.9765199103760043     
+           3  -20.986630200221331     
+Ionic Dipole on Cartesian axes
+           1   13732.067592490663     
+           2   13738.241707995414     
+           3   16131.253304506745     
+
+     total cpu time spent up to now is    24656.9 secs
+
+     total energy              =   -7420.43651705 Ry
+     estimated scf accuracy    <       0.00000853 Ry
+
+     iteration # 16     ecut=   100.00 Ry     beta= 0.70
+     Davidson diagonalization with overlap
+     c_bands:  1 eigenvalues not converged
+     ethr =  7.89E-10,  avg # of iterations = 20.0
+
+     Expectation value of exp(iGx):   (1.53374973469548575E-007,4.73542861966520860E-008)   1.0000000000000000     
+     Electronic Dipole per cell (Ry a.u.)   3.0310354498292695     
+     Ionic Dipole per cell (Ry a.u.)   13732.067592490663     
+
+     Expectation value of exp(iGx):  (1.57480960618724341E-007,-3.11464912536315893E-008)   1.0000000000000000     
+     Electronic Dipole per cell (Ry a.u.)  -1.9763292152498162     
+     Ionic Dipole per cell (Ry a.u.)   13738.241707995414     
+
+     Expectation value of exp(iGx): (-6.16231383536221772E-007,-1.75725466624107868E-006)   1.0852077191500298     
+     Electronic Dipole per cell (Ry a.u.)  -20.958278607011632     
+     Ionic Dipole per cell (Ry a.u.)   16131.253304506745     
+Electronic Dipole on Cartesian axes
+           1   3.0310354498292695     
+           2  -1.9763292152498162     
+           3  -20.958278607011632     
+Ionic Dipole on Cartesian axes
+           1   13732.067592490663     
+           2   13738.241707995414     
+           3   16131.253304506745     
+
+     total cpu time spent up to now is    26324.8 secs
+
+     total energy              =   -7420.43651544 Ry
+     estimated scf accuracy    <       0.00003944 Ry
+
+     iteration # 17     ecut=   100.00 Ry     beta= 0.70
+     Davidson diagonalization with overlap
+     c_bands:  1 eigenvalues not converged
+     ethr =  7.89E-10,  avg # of iterations = 20.0
+
+     Expectation value of exp(iGx):   (1.53472783248260957E-007,4.73865104895923843E-008)   1.0000000000000000     
+     Electronic Dipole per cell (Ry a.u.)   3.0311574163663173     
+     Ionic Dipole per cell (Ry a.u.)   13732.067592490663     
+
+     Expectation value of exp(iGx):  (1.57590648669417118E-007,-3.11698221836026532E-008)   1.0000000000000000     
+     Electronic Dipole per cell (Ry a.u.)  -1.9764303898834923     
+     Ionic Dipole per cell (Ry a.u.)   13738.241707995414     
+
+     Expectation value of exp(iGx): (-6.18050797281390471E-007,-1.75749804188413648E-006)   1.0852077191500298     
+     Electronic Dipole per cell (Ry a.u.)  -20.967926377953429     
+     Ionic Dipole per cell (Ry a.u.)   16131.253304506745     
+Electronic Dipole on Cartesian axes
+           1   3.0311574163663173     
+           2  -1.9764303898834923     
+           3  -20.967926377953429     
+Ionic Dipole on Cartesian axes
+           1   13732.067592490663     
+           2   13738.241707995414     
+           3   16131.253304506745     
+
+     total cpu time spent up to now is    27961.8 secs
+
+     total energy              =   -7420.43651238 Ry
+     estimated scf accuracy    <       0.00002065 Ry
+
+     iteration # 18     ecut=   100.00 Ry     beta= 0.70
+     Davidson diagonalization with overlap
+     c_bands:  1 eigenvalues not converged
+     ethr =  7.89E-10,  avg # of iterations = 20.0
+
+     Expectation value of exp(iGx):   (1.53756507143541251E-007,4.74769468803488027E-008)   1.0000000000000000     
+     Electronic Dipole per cell (Ry a.u.)   3.0313276958532467     
+     Ionic Dipole per cell (Ry a.u.)   13732.067592490663     
+
+     Expectation value of exp(iGx):  (1.57885782083613208E-007,-3.12245905335628138E-008)   1.0000000000000000     
+     Electronic Dipole per cell (Ry a.u.)  -1.9762079211022574     
+     Ionic Dipole per cell (Ry a.u.)   13738.241707995414     
+
+     Expectation value of exp(iGx): (-6.22619307844155285E-007,-1.75859193333390679E-006)   1.0852077191500298     
+     Electronic Dipole per cell (Ry a.u.)  -20.991164801983814     
+     Ionic Dipole per cell (Ry a.u.)   16131.253304506745     
+Electronic Dipole on Cartesian axes
+           1   3.0313276958532467     
+           2  -1.9762079211022574     
+           3  -20.991164801983814     
+Ionic Dipole on Cartesian axes
+           1   13732.067592490663     
+           2   13738.241707995414     
+           3   16131.253304506745     
+
+     total cpu time spent up to now is    29635.7 secs
+
+     total energy              =   -7420.43651394 Ry
+     estimated scf accuracy    <       0.00000225 Ry
+
+     iteration # 19     ecut=   100.00 Ry     beta= 0.70
+     Davidson diagonalization with overlap
+     c_bands:  1 eigenvalues not converged
+     ethr =  2.08E-10,  avg # of iterations = 20.0
+
+     Expectation value of exp(iGx):   (1.53816471803942549E-007,4.74978004597759047E-008)   1.0000000000000000     
+     Electronic Dipole per cell (Ry a.u.)   3.0314681316430607     
+     Ionic Dipole per cell (Ry a.u.)   13732.067592490663     
+
+     Expectation value of exp(iGx):  (1.57951732099775152E-007,-3.12384972790978006E-008)   1.0000000000000000     
+     Electronic Dipole per cell (Ry a.u.)  -1.9762612029955298     
+     Ionic Dipole per cell (Ry a.u.)   13738.241707995414     
+
+     Expectation value of exp(iGx): (-6.23365701395983481E-007,-1.75865853921714054E-006)   1.0852077191500298     
+     Electronic Dipole per cell (Ry a.u.)  -20.995175881026412     
+     Ionic Dipole per cell (Ry a.u.)   16131.253304506745     
+Electronic Dipole on Cartesian axes
+           1   3.0314681316430607     
+           2  -1.9762612029955298     
+           3  -20.995175881026412     
+Ionic Dipole on Cartesian axes
+           1   13732.067592490663     
+           2   13738.241707995414     
+           3   16131.253304506745     
+
+     total cpu time spent up to now is    31265.3 secs
+
+     total energy              =   -7420.43651389 Ry
+     estimated scf accuracy    <       0.00000089 Ry
+
+     iteration # 20     ecut=   100.00 Ry     beta= 0.70
+     Davidson diagonalization with overlap
+     c_bands:  1 eigenvalues not converged
+     ethr =  8.20E-11,  avg # of iterations = 20.0
+
+     Expectation value of exp(iGx):   (1.53864895205302706E-007,4.75136343849175332E-008)   1.0000000000000000     
+     Electronic Dipole per cell (Ry a.u.)   3.0315210409141047     
+     Ionic Dipole per cell (Ry a.u.)   13732.067592490663     
+
+     Expectation value of exp(iGx):  (1.57992356033390698E-007,-3.12469746638976545E-008)   1.0000000000000000     
+     Electronic Dipole per cell (Ry a.u.)  -1.9762885204692826     
+     Ionic Dipole per cell (Ry a.u.)   13738.241707995414     
+
+     Expectation value of exp(iGx): (-6.24337215351076522E-007,-1.75884021614884315E-006)   1.0852077191500298     
+     Electronic Dipole per cell (Ry a.u.)  -21.000207732158007     
+     Ionic Dipole per cell (Ry a.u.)   16131.253304506745     
+Electronic Dipole on Cartesian axes
+           1   3.0315210409141047     
+           2  -1.9762885204692826     
+           3  -21.000207732158007     
+Ionic Dipole on Cartesian axes
+           1   13732.067592490663     
+           2   13738.241707995414     
+           3   16131.253304506745     
+
+     total cpu time spent up to now is    32886.3 secs
+
+     total energy              =   -7420.43651399 Ry
+     estimated scf accuracy    <       0.00000014 Ry
+
+     iteration # 21     ecut=   100.00 Ry     beta= 0.70
+     Davidson diagonalization with overlap
+     c_bands:  1 eigenvalues not converged
+     ethr =  1.33E-11,  avg # of iterations = 20.0
+
+     Expectation value of exp(iGx):   (1.53893849422844508E-007,4.75225230110299753E-008)   1.0000000000000000     
+     Electronic Dipole per cell (Ry a.u.)   3.0315178906807847     
+     Ionic Dipole per cell (Ry a.u.)   13732.067592490663     
+
+     Expectation value of exp(iGx):  (1.58019909157153062E-007,-3.12531460886233389E-008)   1.0000000000000000     
+     Electronic Dipole per cell (Ry a.u.)  -1.9763330315673910     
+     Ionic Dipole per cell (Ry a.u.)   13738.241707995414     
+
+     Expectation value of exp(iGx): (-6.24874917260309006E-007,-1.75894807885119201E-006)   1.0852077191500298     
+     Electronic Dipole per cell (Ry a.u.)  -21.002977150759683     
+     Ionic Dipole per cell (Ry a.u.)   16131.253304506745     
+Electronic Dipole on Cartesian axes
+           1   3.0315178906807847     
+           2  -1.9763330315673910     
+           3  -21.002977150759683     
+Ionic Dipole on Cartesian axes
+           1   13732.067592490663     
+           2   13738.241707995414     
+           3   16131.253304506745     
+
+     total cpu time spent up to now is    34523.3 secs
+
+     total energy              =   -7420.43651403 Ry
+     estimated scf accuracy    <       0.00000004 Ry
+
+     iteration # 22     ecut=   100.00 Ry     beta= 0.70
+     Davidson diagonalization with overlap
+     c_bands:  1 eigenvalues not converged
+     ethr =  3.79E-12,  avg # of iterations = 20.0
+
+     Expectation value of exp(iGx):   (1.53909027596505374E-007,4.75274626482814252E-008)   1.0000000000000000     
+     Electronic Dipole per cell (Ry a.u.)   3.0315330567307814     
+     Ionic Dipole per cell (Ry a.u.)   13732.067592490663     
+
+     Expectation value of exp(iGx):  (1.58034934543242937E-007,-3.12559506844510902E-008)   1.0000000000000000     
+     Electronic Dipole per cell (Ry a.u.)  -1.9763227309441420     
+     Ionic Dipole per cell (Ry a.u.)   13738.241707995414     
+
+     Expectation value of exp(iGx): (-6.25057151462780635E-007,-1.75899224397180126E-006)   1.0852077191500298     
+     Electronic Dipole per cell (Ry a.u.)  -21.003900562009171     
+     Ionic Dipole per cell (Ry a.u.)   16131.253304506745     
+Electronic Dipole on Cartesian axes
+           1   3.0315330567307814     
+           2  -1.9763227309441420     
+           3  -21.003900562009171     
+Ionic Dipole on Cartesian axes
+           1   13732.067592490663     
+           2   13738.241707995414     
+           3   16131.253304506745     
+
+     total cpu time spent up to now is    36168.4 secs
+
+     total energy              =   -7420.43651404 Ry
+     estimated scf accuracy    <       0.00000001 Ry
+
+     iteration # 23     ecut=   100.00 Ry     beta= 0.70
+     Davidson diagonalization with overlap
+     c_bands:  1 eigenvalues not converged
+     ethr =  1.04E-12,  avg # of iterations = 20.0
+
+     Expectation value of exp(iGx):   (1.53915361057771060E-007,4.75292212213560028E-008)   1.0000000000000000     
+     Electronic Dipole per cell (Ry a.u.)   3.0315212168450265     
+     Ionic Dipole per cell (Ry a.u.)   13732.067592490663     
+
+     Expectation value of exp(iGx):  (1.58041539260600382E-007,-3.12573048695930652E-008)   1.0000000000000000     
+     Electronic Dipole per cell (Ry a.u.)  -1.9763256839210166     
+     Ionic Dipole per cell (Ry a.u.)   13738.241707995414     
+
+     Expectation value of exp(iGx): (-6.25188086955726591E-007,-1.75901095247105020E-006)   1.0852077191500298     
+     Electronic Dipole per cell (Ry a.u.)  -21.004589635067731     
+     Ionic Dipole per cell (Ry a.u.)   16131.253304506745     
+Electronic Dipole on Cartesian axes
+           1   3.0315212168450265     
+           2  -1.9763256839210166     
+           3  -21.004589635067731     
+Ionic Dipole on Cartesian axes
+           1   13732.067592490663     
+           2   13738.241707995414     
+           3   16131.253304506745     
+
+     total cpu time spent up to now is    37825.2 secs
+
+     total energy              =   -7420.43651404 Ry
+     estimated scf accuracy    <       0.00000002 Ry
+
+     iteration # 24     ecut=   100.00 Ry     beta= 0.70
+     Davidson diagonalization with overlap
+     c_bands:  1 eigenvalues not converged
+     ethr =  1.04E-12,  avg # of iterations = 20.0
+
+     Expectation value of exp(iGx):   (1.53912668768753600E-007,4.75284286564713704E-008)   1.0000000000000000     
+     Electronic Dipole per cell (Ry a.u.)   3.0315235472722568     
+     Ionic Dipole per cell (Ry a.u.)   13732.067592490663     
+
+     Expectation value of exp(iGx):  (1.58039145246155530E-007,-3.12568661693564195E-008)   1.0000000000000000     
+     Electronic Dipole per cell (Ry a.u.)  -1.9763278278897247     
+     Ionic Dipole per cell (Ry a.u.)   13738.241707995414     
+
+     Expectation value of exp(iGx): (-6.25136750288891559E-007,-1.75900255805297066E-006)   1.0852077191500298     
+     Electronic Dipole per cell (Ry a.u.)  -21.004321558589844     
+     Ionic Dipole per cell (Ry a.u.)   16131.253304506745     
+Electronic Dipole on Cartesian axes
+           1   3.0315235472722568     
+           2  -1.9763278278897247     
+           3  -21.004321558589844     
+Ionic Dipole on Cartesian axes
+           1   13732.067592490663     
+           2   13738.241707995414     
+           3   16131.253304506745     
+
+     total cpu time spent up to now is    39416.3 secs
+
+     End of self-consistent calculation
+
+          k = 0.0000 0.0000 0.0000 (208381 PWs)   bands (ev):
+
+   -46.7238 -46.7235 -46.7131 -46.7041 -46.7015 -46.6992 -46.6973 -46.6912
+   -46.6847 -46.6793 -46.6721 -46.6689 -46.6573 -46.6544 -46.6487 -46.6472
+   -46.6460 -46.6455 -46.6400 -46.6314 -46.6229 -46.6196 -46.6191 -46.6153
+   -46.6121 -46.5884 -46.5803 -23.1178 -23.1053 -23.0997 -23.0978 -23.0925
+   -23.0883 -23.0874 -23.0857 -23.0764 -23.0740 -23.0718 -23.0644 -23.0567
+   -23.0557 -23.0550 -23.0527 -23.0493 -23.0465 -23.0383 -23.0358 -23.0285
+   -23.0282 -23.0272 -23.0161 -23.0132 -22.9973 -22.9825 -22.9805 -22.9782
+   -22.9772 -22.9770 -22.9662 -22.9626 -22.9624 -22.9581 -22.9578 -22.9514
+   -22.9472 -22.9470 -22.9459 -22.9441 -22.9406 -22.9374 -22.9355 -22.9338
+   -22.9298 -22.9290 -22.9257 -22.9224 -22.9210 -22.9157 -22.9127 -22.9107
+   -22.9106 -22.9064 -22.9015 -22.9008 -22.8990 -22.8980 -22.8955 -22.8933
+   -22.8912 -22.8820 -22.8777 -22.8776 -22.8773 -22.8758 -22.8756 -22.8755
+   -22.8714 -22.8673 -22.8658 -22.8638 -22.8630 -22.8627 -22.8497 -22.8400
+   -22.8317 -22.8300 -22.8284 -22.8253 -15.3539 -15.3168 -15.3055 -15.2875
+   -15.2790 -15.2702 -15.2608 -15.2558 -15.2510 -15.2480 -15.2383 -15.2349
+   -15.2308 -15.2228 -15.2207 -15.2124 -15.2047 -15.1985 -15.1917 -15.1894
+   -15.1835 -15.1769 -15.1742 -15.1697 -15.1654 -15.1611 -15.1529  -7.1643
+    -7.1596  -7.1502  -7.1400  -7.1385  -7.1306  -7.0496  -6.9527  -6.9401
+    -6.9317  -6.9301  -6.9222  -6.9162  -6.9117  -6.9074  -6.9051  -6.8977
+    -6.8916  -6.8867  -6.7053  -6.6990  -6.6949  -6.6828  -6.6733  -6.6694
+    -6.6607  -6.6540  -6.5574  -6.5472  -6.5448  -6.5431  -6.5383  -6.5316
+    -6.5200  -6.5134  -6.4892  -6.4610  -6.4478  -6.4306  -6.4233  -6.4180
+    -6.4044  -6.3559  -6.3495  -6.3487  -6.3431  -6.3394  -6.3334  -6.3298
+    -6.3271  -6.3084  -6.2958  -6.2877  -6.2732  -6.2712  -6.2638  -6.2529
+    -6.2499  -6.2423  -6.2380  -6.2337  -6.2312  -6.2241  -6.2216  -6.2133
+    -6.2087  -6.2035  -6.1984  -6.1890  -6.1873  -6.1765  -6.1705  -6.1701
+    -6.1662  -6.1607  -6.1541  -6.1510  -6.1463  -6.1348  -6.1287  -6.1248
+    -0.9102  -0.9088  -0.9046  -0.9027  -0.8974  -0.8943  -0.8870  -0.8823
+    -0.7654  -0.7640  -0.7586  -0.7561  -0.7542  -0.7500  -0.7470  -0.7416
+    -0.6607  -0.6578  -0.6489  -0.6456  -0.5433  -0.5118  -0.5061  -0.5044
+    -0.4996  -0.4970  -0.4957  -0.4903  -0.4863  -0.4642  -0.4630  -0.4575
+    -0.4532  -0.4527  -0.4497  -0.4481  -0.4464  -0.4424  -0.4389  -0.4372
+    -0.4349  -0.4339  -0.4314  -0.4291  -0.4279  -0.4262  -0.4214  -0.3850
+    -0.3830  -0.3716  -0.3708  -0.3304  -0.3289  -0.3220  -0.3191  -0.3142
+    -0.3109  -0.3102  -0.3085  -0.3067  -0.3044  -0.3010  -0.2993  -0.2966
+    -0.2921  -0.2903  -0.2869  -0.2815  -0.2796  -0.2736  -0.2689  -0.2440
+    -0.2400  -0.2312  -0.2309  -0.2277  -0.2239  -0.2203  -0.2164  -0.1975
+    -0.1896   5.8214   5.8354   5.8423   5.8505   5.8563   5.8630   5.8689
+     5.8722   5.9086   5.9217   5.9335   5.9358   6.0259   6.0324   6.0357
+     6.0417   6.0482   6.0515   6.0555   6.0597   6.1232   6.1276   6.1293
+     6.1350   6.1406   6.1459   6.1536   6.1570   6.1943   6.2077   6.2167
+     6.2300   6.2493   6.2629   6.3420   6.3640   6.3774   6.3808   6.3827
+     6.3876   6.3922   6.3926   6.3988   6.4052   6.4069   6.4161   6.4179
+     6.4216   6.4314   6.4382   6.4457   6.4516   6.4526   6.4599   6.4649
+     6.4698   6.4739   6.4818   6.7179   6.7259   6.7325   6.7383   6.7387
+     6.7422   6.7443   6.7519   6.8373   6.8432   6.8450   6.8495   6.8512
+     6.8561   6.8585   6.8594   6.9319   6.9362   6.9417   6.9441   7.0378
+     7.0408   7.0521   7.0556   7.0624   7.0660   7.0752   7.0759   7.0937
+     7.1025   7.1043   7.1131   7.1392   7.1425   7.1436   7.1500   7.1518
+     7.1533   7.1578   7.1600   7.1607   7.1651   7.1656   7.1692   7.1715
+     7.1730   7.1801   7.1841   7.2058   7.2097   7.2151   7.2189   7.2494
+     7.2571   7.2596   7.2639   7.2655   7.2719   7.2762   7.2812   7.2837
+     7.3049   7.3074   7.3163   7.3201   7.3875   7.3923   7.3971   7.4030
+     7.4041   7.4076   7.4098   7.4156   7.4222   7.4236   7.7205   7.7248
+     7.7308   7.7366   7.7417   7.7447   7.7496   7.7529   7.7562   7.7593
+     7.7693   7.7752   7.9943   7.9953   8.0213   8.0266   8.0399   8.0505
+     8.0977   8.1095   8.1143   8.1258   8.2693   8.2765   8.2782   8.2821
+     8.2857   8.2879   8.2919   8.2923   8.2956   8.3008   8.3031   8.3084
+     8.3132   8.3159   8.3201   8.3224   8.3284   8.3316   8.3360   8.3389
+     8.4274   8.4312   8.4394   8.4451   8.4730   8.4758   8.4803   8.4867
+     8.4925   8.5909   8.6099   8.6173   8.6251   8.6468   8.6513   8.6560
+     8.6573   8.6604   8.6646   8.6687   8.6707   8.6911   8.6955   8.7026
+     8.7077   8.7270   8.8575   8.8635   8.8665   8.8705   8.8776   8.8802
+     8.8851   8.8924   9.0312   9.0381   9.0440   9.0466   9.0512   9.0529
+     9.0595   9.0624   9.0676   9.0716   9.0774   9.0860   9.0902   9.0944
+     9.0977   9.1037   9.2317   9.2321   9.2394   9.2406   9.3118   9.3123
+     9.4746   9.4893   9.5022   9.5115   9.5198   9.5242   9.5333   9.5395
+     9.5698   9.5921   9.6059   9.6125  11.8003  11.8699  11.8784  12.6102
+    12.6327  12.6429  12.6519  12.6578  12.6918  12.8786
+
+     highest occupied, lowest unoccupied level (ev):     9.6125   11.8003
+
+!    total energy              =   -7420.43651403 Ry
+     estimated scf accuracy    <          8.9E-09 Ry
+
+     The total energy is the sum of the following terms:
+     one-electron contribution =   -2150.88638551 Ry
+     hartree contribution      =    1695.23854261 Ry
+     xc contribution           =   -1513.44162635 Ry
+     ewald contribution        =   -5449.97341824 Ry
+
+     convergence has been achieved in  24 iterations
+
+     Forces acting on atoms (cartesian axes, Ry/au):
+
+     atom    1 type  1   force =    -0.00187512   -0.00032732   -0.00424895
+     atom    2 type  1   force =     0.00278649   -0.00258075    0.00029689
+     atom    3 type  1   force =     0.00160002   -0.00172832    0.00365921
+     atom    4 type  1   force =     0.00049672    0.00202670   -0.00173835
+     atom    5 type  1   force =    -0.00161506    0.00174784   -0.00242182
+     atom    6 type  1   force =    -0.00003084   -0.00135456    0.00242095
+     atom    7 type  1   force =     0.00308939    0.00213433   -0.00200032
+     atom    8 type  1   force =    -0.00149690    0.00378564    0.00076056
+     atom    9 type  1   force =     0.00022337    0.00125077   -0.00089181
+     atom   10 type  1   force =     0.00118057    0.00011659   -0.00062101
+     atom   11 type  1   force =     0.00006306    0.00117413   -0.00137439
+     atom   12 type  1   force =     0.00035881   -0.00139958   -0.00081428
+     atom   13 type  1   force =    -0.00137301   -0.00373511    0.00191555
+     atom   14 type  1   force =     0.00083223    0.00152029    0.00204155
+     atom   15 type  1   force =    -0.00059737   -0.00006487   -0.00239882
+     atom   16 type  1   force =    -0.00356396    0.00574417    0.00068795
+     atom   17 type  1   force =     0.00241172    0.00233357   -0.00066639
+     atom   18 type  1   force =     0.00090266    0.00037647    0.00008685
+     atom   19 type  1   force =     0.00164396    0.00358095   -0.00054279
+     atom   20 type  1   force =    -0.00055378   -0.00227735    0.00038379
+     atom   21 type  1   force =     0.00026210   -0.00113347    0.00014842
+     atom   22 type  1   force =    -0.00076097   -0.00317385   -0.00282809
+     atom   23 type  1   force =    -0.00047232    0.00508630   -0.00058798
+     atom   24 type  1   force =    -0.00090265   -0.00124294    0.00094030
+     atom   25 type  1   force =     0.00070555    0.00213473    0.00225295
+     atom   26 type  1   force =    -0.00195369   -0.00128717    0.00131210
+     atom   27 type  1   force =     0.00261530    0.00274558   -0.00135055
+     atom   28 type  2   force =    -0.00079404    0.00341196   -0.00473683
+     atom   29 type  2   force =    -0.00184836   -0.00332830    0.00278893
+     atom   30 type  2   force =     0.00573280    0.00685218   -0.00663976
+     atom   31 type  2   force =    -0.00129809    0.00384652   -0.00752125
+     atom   32 type  2   force =    -0.00494515    0.00138246    0.00945658
+     atom   33 type  2   force =    -0.00021641   -0.00470011    0.00150466
+     atom   34 type  2   force =    -0.00152657   -0.00632486    0.01491026
+     atom   35 type  2   force =    -0.00721321    0.00704500    0.00212257
+     atom   36 type  2   force =     0.00242686   -0.00027288    0.00572586
+     atom   37 type  2   force =     0.00173719   -0.00522553   -0.00957014
+     atom   38 type  2   force =    -0.00389385    0.00055144   -0.00317495
+     atom   39 type  2   force =    -0.00392700    0.00323009    0.00984035
+     atom   40 type  2   force =     0.00516981   -0.00389422   -0.00134702
+     atom   41 type  2   force =     0.00337290   -0.00810691   -0.00112567
+     atom   42 type  2   force =    -0.00433157   -0.00445284   -0.00289920
+     atom   43 type  2   force =    -0.00116387    0.00894919   -0.01412333
+     atom   44 type  2   force =     0.00410260    0.00895943    0.00630439
+     atom   45 type  2   force =    -0.00626880    0.00648434    0.00812029
+     atom   46 type  2   force =    -0.00175133   -0.00251282    0.00182509
+     atom   47 type  2   force =     0.00611537    0.00205356   -0.01181258
+     atom   48 type  2   force =    -0.00157730    0.00096169   -0.00101669
+     atom   49 type  2   force =    -0.00372805   -0.00650295   -0.01471834
+     atom   50 type  2   force =     0.00031608    0.00266770    0.00382599
+     atom   51 type  2   force =     0.00617534   -0.00392380    0.01330265
+     atom   52 type  2   force =     0.00367438    0.00842043    0.01521101
+     atom   53 type  2   force =     0.00291529    0.00130816   -0.01337779
+     atom   54 type  2   force =     0.00345985    0.00370841   -0.00483075
+     atom   55 type  3   force =     0.00255707   -0.00029825   -0.00057432
+     atom   56 type  3   force =    -0.00565872    0.00131468   -0.00006841
+     atom   57 type  3   force =     0.00121306    0.00020363    0.00734631
+     atom   58 type  3   force =     0.00014197    0.00851875   -0.00213966
+     atom   59 type  3   force =     0.00303717    0.00210237   -0.00368949
+     atom   60 type  3   force =    -0.00335475   -0.00208307    0.00333619
+     atom   61 type  3   force =    -0.00360977   -0.00761736   -0.00058543
+     atom   62 type  3   force =    -0.00089942   -0.00343104    0.00061699
+     atom   63 type  3   force =    -0.00162623   -0.00166672    0.00454894
+     atom   64 type  3   force =     0.00148927    0.00151779   -0.00166401
+     atom   65 type  3   force =     0.00034714   -0.00182340    0.00169617
+     atom   66 type  3   force =     0.00063370   -0.00291956    0.00837961
+     atom   67 type  3   force =    -0.00007353   -0.00003842    0.00298399
+     atom   68 type  3   force =    -0.00183522   -0.00123142    0.00032078
+     atom   69 type  3   force =    -0.00071736    0.00194808   -0.01127619
+     atom   70 type  3   force =     0.00239318    0.00289237   -0.00324802
+     atom   71 type  3   force =     0.00555520    0.00303408   -0.00198950
+     atom   72 type  3   force =    -0.00147698   -0.00081371    0.00633379
+     atom   73 type  3   force =     0.00157700   -0.00507801   -0.00228189
+     atom   74 type  3   force =    -0.00241611    0.00168772    0.00074825
+     atom   75 type  3   force =    -0.00010428    0.00205286   -0.01021668
+     atom   76 type  3   force =    -0.00256114   -0.00490093    0.00069292
+     atom   77 type  3   force =     0.00244590   -0.00314099    0.00146219
+     atom   78 type  3   force =     0.00056420   -0.00048680   -0.00676202
+     atom   79 type  3   force =    -0.00282764    0.00236395    0.00085014
+     atom   80 type  3   force =     0.00507794   -0.00417240   -0.00157045
+     atom   81 type  3   force =    -0.00226488    0.00172279   -0.00251245
+     atom   82 type  3   force =    -0.00150346    0.00060826    0.00250228
+     atom   83 type  3   force =     0.00392173    0.00268581   -0.00063702
+     atom   84 type  3   force =    -0.00150219    0.00110715    0.00778254
+     atom   85 type  3   force =    -0.00043218    0.00184368    0.00220195
+     atom   86 type  3   force =     0.00091163   -0.00113658    0.00162235
+     atom   87 type  3   force =     0.00051258    0.00251755    0.00448778
+     atom   88 type  3   force =     0.00219942   -0.00322449   -0.00079976
+     atom   89 type  3   force =    -0.00006663    0.00165994   -0.00208672
+     atom   90 type  3   force =    -0.00138839   -0.00144424   -0.00749405
+     atom   91 type  3   force =     0.00127454    0.00151890   -0.00004665
+     atom   92 type  3   force =     0.00489326    0.00372039    0.00227197
+     atom   93 type  3   force =    -0.00113310    0.00128361    0.00100943
+     atom   94 type  3   force =     0.00063222    0.00043913   -0.00070286
+     atom   95 type  3   force =     0.00038919   -0.00010273   -0.00053929
+     atom   96 type  3   force =    -0.00028067    0.00362615   -0.00335701
+     atom   97 type  3   force =     0.00009674    0.00795099   -0.00286446
+     atom   98 type  3   force =     0.00380205    0.00164782   -0.00053073
+     atom   99 type  3   force =    -0.00062397   -0.00037367    0.00623014
+     atom  100 type  3   force =    -0.00056443   -0.00629104    0.00172192
+     atom  101 type  3   force =     0.00543904   -0.00352239   -0.00128901
+     atom  102 type  3   force =     0.00010042   -0.00271070    0.01247897
+     atom  103 type  3   force =     0.00105421   -0.00706945   -0.00232662
+     atom  104 type  3   force =    -0.00747928   -0.00320738   -0.00092465
+     atom  105 type  3   force =    -0.00219222   -0.00341733   -0.00218103
+     atom  106 type  3   force =     0.00182220   -0.00208498   -0.00010016
+     atom  107 type  3   force =    -0.00502770    0.00117473   -0.00139488
+     atom  108 type  3   force =     0.00234049   -0.00363414   -0.00848896
+     atom  109 type  3   force =     0.00035987    0.00227123   -0.00172012
+     atom  110 type  3   force =     0.00161377   -0.00119048   -0.00192410
+     atom  111 type  3   force =    -0.00005393   -0.00153761    0.00042332
+     atom  112 type  3   force =    -0.00247541    0.00612731    0.00109244
+     atom  113 type  3   force =     0.00138720   -0.00324792   -0.00076007
+     atom  114 type  3   force =    -0.00068120   -0.00160621    0.01055777
+     atom  115 type  3   force =    -0.00279935   -0.00110229   -0.00024552
+     atom  116 type  3   force =     0.00461243   -0.00198465    0.00004521
+     atom  117 type  3   force =    -0.00174744    0.00140007    0.00348884
+     atom  118 type  3   force =    -0.00348530   -0.00163591    0.00067176
+     atom  119 type  3   force =    -0.00449441   -0.00089855    0.00106627
+     atom  120 type  3   force =     0.00086399    0.00161507    0.01009785
+     atom  121 type  3   force =     0.00064743   -0.00322485    0.00019986
+     atom  122 type  3   force =     0.00077255   -0.00254520   -0.00116532
+     atom  123 type  3   force =    -0.00010711   -0.00147543   -0.00114450
+     atom  124 type  3   force =     0.00100487   -0.00340795   -0.00228358
+     atom  125 type  3   force =    -0.00487036    0.00168207   -0.00259909
+     atom  126 type  3   force =    -0.00104343    0.00007636   -0.00976866
+     atom  127 type  3   force =    -0.00069432   -0.00672679    0.00045948
+     atom  128 type  3   force =    -0.00090680    0.00221921   -0.00304133
+     atom  129 type  3   force =    -0.00108367   -0.00056971   -0.01261035
+     atom  130 type  3   force =    -0.00061114    0.00349051   -0.00014805
+     atom  131 type  3   force =     0.00614407   -0.00308966    0.00120052
+     atom  132 type  3   force =    -0.00258504   -0.00144776    0.01125054
+     atom  133 type  3   force =     0.00076239   -0.00368286   -0.00177234
+     atom  134 type  3   force =    -0.00103548    0.00263102    0.00109583
+     atom  135 type  3   force =     0.00101243   -0.00140111    0.00778428
+
+     Total force =     0.080169     Total SCF correction =     0.000113
+
+
+     Computing stress (Cartesian axis) and pressure
+
+          total   stress  (Ry/bohr**3)                   (kbar)     P=        0.57
+   0.00000275  -0.00000002  -0.00000280            0.40       -0.00       -0.41
+  -0.00000002   0.00000245  -0.00000030           -0.00        0.36       -0.04
+  -0.00000280  -0.00000030   0.00000634           -0.41       -0.04        0.93
+
+
+     Writing all to output data dir /n/holyscratch01/kozinsky_lab/sfalletta/QE/BaTiO3/BaTiO3-Ey-0/BaTiO3.save/
+
+     init_run     :      9.01s CPU     13.94s WALL (       1 calls)
+     electrons    :  37642.49s CPU  39402.34s WALL (       1 calls)
+     forces       :      6.56s CPU      6.67s WALL (       1 calls)
+     stress       :     66.57s CPU     67.28s WALL (       1 calls)
+
+     Called by init_run:
+     wfcinit      :      2.68s CPU      2.91s WALL (       1 calls)
+     potinit      :      1.34s CPU      3.82s WALL (       1 calls)
+     hinit0       :      1.04s CPU      2.95s WALL (       1 calls)
+
+     Called by electrons:
+     c_bands      :   1359.08s CPU   1369.18s WALL (      24 calls)
+     sum_band     :     11.06s CPU     11.77s WALL (      24 calls)
+     v_of_rho     :      9.60s CPU     15.62s WALL (      25 calls)
+     mix_rho      :      3.07s CPU      3.89s WALL (      24 calls)
+
+     Called by c_bands:
+     init_us_2    :      1.44s CPU      1.52s WALL (      49 calls)
+     init_us_2:cp :      1.44s CPU      1.52s WALL (      49 calls)
+     cegterg      :   1354.96s CPU   1364.77s WALL (      24 calls)
+
+     Called by *egterg:
+     cdiaghg      :     81.59s CPU     82.23s WALL (     440 calls)
+     h_psi        :   1192.58s CPU   1200.89s WALL (     441 calls)
+     g_psi        :      0.30s CPU      0.31s WALL (     416 calls)
+
+     Called by h_psi:
+     h_psi:calbec :     36.06s CPU     36.59s WALL (     441 calls)
+     vloc_psi     :     51.44s CPU     52.11s WALL (     441 calls)
+     add_vuspsi   :     28.17s CPU     28.43s WALL (     441 calls)
+
+     General routines
+     calbec       :     38.87s CPU     39.42s WALL (     446 calls)
+     fft          :     13.16s CPU     22.36s WALL (     322 calls)
+     ffts         :      0.12s CPU      0.14s WALL (      49 calls)
+     fftw         :     47.34s CPU     47.87s WALL (   91532 calls)
+     interpolate  :      0.41s CPU      0.42s WALL (      25 calls)
+
+     Parallel routines
+
+     Electric-field routines
+     h_epsi_set   :  22136.60s CPU  22778.14s WALL (      24 calls)
+     h_epsi_apply :   1076.41s CPU   1082.93s WALL (     440 calls)
+     c_phase_fiel :  14120.97s CPU  15223.68s WALL (      72 calls)
+
+     PWSCF        :     10h28m CPU     10h58m WALL
+
+
+   This run was terminated on:  20:40:45  25Jan2024            
+
+=------------------------------------------------------------------------------=
+   JOB DONE.
+=------------------------------------------------------------------------------=
