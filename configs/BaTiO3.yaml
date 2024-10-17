@@ -14,7 +14,7 @@ model_builders:
  - nequip_pol.model.Allegro
  - PerSpeciesRescale
  - PairPotentialTerm
- - nequip_pol.model.ForceStressPolarizationOutput
+ - allegro_pol.model.ForceStressPolarizationOutput
  - RescaleEnergyEtc
 
 pair_style:    ZBL
@@ -98,7 +98,7 @@ loss_coeffs:
     - MSELoss
   polarization:
     - 1
-    - !!python/object:nequip_pol.pol_loss.FoldedPolLoss {}
+    - !!python/object:allegro_pol.pol_loss.FoldedPolLoss {}
   born_charge:
     - 1
     - MSELoss
@@ -140,7 +140,7 @@ metrics_components:
     - PerAtom: True
   - - polarization
     - mean
-    - functional: !!python/object:nequip_pol.pol_loss.FoldedPolLoss {}
+    - functional: !!python/object:allegro_pol.pol_loss.FoldedPolLoss {}
   - - born_charge
     - mae  
   - - born_charge
