@@ -22,5 +22,5 @@ setup(
         "nequip==0.6.1",
     ],
     zip_safe=True,
-    entry_points={"nequip.extension": ["init_always = nequip_pol"]},
+    entry_points={"nequip.extension": ["init_always = allegro_pol"]},
 )
