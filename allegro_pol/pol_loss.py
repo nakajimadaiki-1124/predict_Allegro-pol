@@ -11,7 +11,7 @@ class FoldedPolLoss:
         loss_coeffs:
             polarization:
                 - 0.1  (choose this)
-                - !!python/object:nequip-pol-tmp.nequip_pol.pol_loss.FoldedPolLoss {}
+                - !!python/object:allegro_pol.FoldedPolLoss {}
 
     This funny syntax tells PyYAML to construct an object of this class and put it in the config.
     In this case, the `key` argument to `__call__` will be `"polarization"`.
