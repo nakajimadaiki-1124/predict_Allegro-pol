@@ -1,0 +1,36 @@
+# Authors: Anders Johansson, Marc Descoteaux
+
+variable L index 7
+variable STRUCTURE index SiO2-sc222-ortho-k222-phrelax
+variable PERIOD index 50000
+variable EQUILSTEPS index 5000
+variable TEMP index 300
+variable MODEL index SiO2-E0
+log Logs_${ITER}/log.equilibrate_${MODEL}_${STRUCTURE}_${TEMP}_$L_${ITER}_${PERIOD}
+
+units		metal
+atom_style	atomic
+
+read_data ${STRUCTURE}.data
+replicate $L $L $L
+
+pair_style allegro
+pair_coeff      * * ${MODEL}.pth O Si
+mass 1 15.9994
+mass 2 28.08
+
+timestep 0.002
+restart $(v_EQUILSTEPS) ./Restarts_${ITER}/restart.equilibrate_${MODEL}_${STRUCTURE}_${TEMP}_$L_${ITER}_${PERIOD}.*
+
+
+velocity	all create 300 748743 loop geom
+
+thermo 1
+thermo_style custom step time temp press pe spcpu cpuremain
+
+fix		1 all nvt temp ${TEMP} ${TEMP} $(100*dt)
+run $(v_EQUILSTEPS)
+unfix 1
+
+fix		2 all nve
+run $(v_EQUILSTEPS)

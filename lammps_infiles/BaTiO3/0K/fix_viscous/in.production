@@ -1,0 +1,59 @@
+# Authors: Anders Johansson, Marc Descoteaux
+
+variable L index 1
+variable STRUCTURE index BaTiO3_init
+variable PERIOD index 100000
+variable RESTARTFREQ index 5000 
+variable TEMP index 0.001
+variable MODEL index BaTiO3-E0
+
+shell bash get_equilstartstep.sh Restarts_${ITER} > Restarts_${ITER}/startstep
+variable STARTSTEP file Restarts_${ITER}/startstep
+
+log Logs_${ITER}/log.hyst_${MODEL}_${STRUCTURE}_${TEMP}_$L_${ITER}_${PERIOD}_0
+
+units		metal
+atom_style	atomic
+boundary 	p p p 
+
+read_restart Restarts_${ITER}/restart.equilibrate_${MODEL}_${STRUCTURE}_${TEMP}_$L_${ITER}_${PERIOD}.${STARTSTEP}
+
+pair_style allegro
+pair_coeff      * * ${MODEL}.pth Ba O Ti
+mass 1 137.3
+mass 2 15.9994
+mass 3 47.9
+
+timestep 0.002
+
+compute polarization all allegro polarization 3
+compute polarizability all allegro polarizability 9
+compute borncharges all allegro/atom born_charge 9 1
+
+thermo_style custom pe fmax fnorm spcpu cpuremain
+
+reset_timestep 0
+
+variable interval equal 1000
+thermo 10
+
+restart ${RESTARTFREQ} Restarts_${ITER}/restart.hyst_${MODEL}_${STRUCTURE}_${TEMP}_$L_${ITER}_${PERIOD}.*
+
+variable nintervals equal $(v_PERIOD/v_interval)
+variable efield equal 1e-2*36.36*cos((step/${PERIOD})*2*3.14)
+fix born all addbornforce 0.0 0.0 v_efield
+
+variable Pz equal (f_born[3]+c_polarization[3])/vol
+variable pe equal pe
+
+fix aveP all ave/time 1 $(v_interval/2) ${interval} v_efield v_Pz v_pe f_born file Dumps_${ITER}/Pz.${MODEL}.${STRUCTURE}.${TEMP}.$L.${ITER}.${PERIOD}.${STARTSTEP}
+
+thermo_style custom step time temp press pe f_born v_efield v_Pz spcpu cpuremain
+
+dump 4a all custom 10 Dumps_${ITER}/dump.hyst.${MODEL}.${STRUCTURE}.${TEMP}.$L.${ITER}.${PERIOD}.${STARTSTEP}.bin id type xu yu zu fx fy fz c_borncharges[*]
+dump_modify 4a sort id
+fix damp all viscous 0.5
+fix nve all nve
+
+run $(v_PERIOD) upto
+

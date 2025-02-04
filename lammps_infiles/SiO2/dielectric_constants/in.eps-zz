@@ -1,0 +1,55 @@
+# Authors: Anders Johansson, Marc Descoteaux
+
+variable L index 1
+variable STRUCTURE index SiO2-sc222-ortho-k222-phrelax
+variable EQUILSTEPS index 100
+variable MODEL index SiO2-E0
+log Logs_1/log.equilibrate_${MODEL}_${STRUCTURE}_$L_zz_E0
+
+units           metal
+atom_style      atomic
+
+read_data ${STRUCTURE}.data
+replicate $L $L $L
+
+pair_style allegro
+pair_coeff      * * ${MODEL}.pth O Si
+mass 1 15.9994
+mass 2 28.08
+
+timestep 0.002
+compute polarization all allegro polarization 3
+compute polarizability all allegro polarizability 9
+
+thermo 1
+thermo_style custom pe fmax fnorm spcpu cpuremain
+min_style fire
+minimize 0.0 1e-6 $(v_EQUILSTEPS) $(v_EQUILSTEPS)
+
+
+thermo 1 
+thermo_style custom pe c_polarization[*]
+
+run 0
+
+variable P0x equal $(c_polarization[1])
+variable P0y equal $(c_polarization[2])
+variable P0z equal $(c_polarization[3])
+
+variable eps0 equal 5.5263499562*1e-3
+variable efield equal 1e-3*36.36
+fix born all addbornforce 0.0 0.0 $(v_efield)
+
+variable Px equal f_born[1]+c_polarization[1]
+variable Py equal f_born[2]+c_polarization[2]
+variable Pz equal f_born[3]+c_polarization[3]
+
+variable eps equal 1+(v_Pz-v_P0z)/(v_efield*vol*v_eps0)
+
+thermo_style custom step time temp press pe f_born c_polarization[*] f_born[*] c_polarizability[*] v_eps fmax fnorm spcpu cpuremain
+
+dump 4a all custom 10 dump.relax.${MODEL}.${STRUCTURE}.$L.zz_E0.bin id type xu yu zu fx fy fz
+
+dump_modify 4a sort id
+reset_timestep 0
+minimize 0.0 1e-6 $(v_EQUILSTEPS) $(v_EQUILSTEPS)

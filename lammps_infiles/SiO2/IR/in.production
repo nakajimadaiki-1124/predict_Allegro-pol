@@ -1,0 +1,47 @@
+# Authors: Anders Johansson, Marc Descoteaux
+
+variable L index 7
+variable STRUCTURE index SiO2-sc222-ortho-k222-phrelax
+variable PERIOD index 50000
+variable RESTARTFREQ index 5000 
+variable TEMP index 300
+variable MODEL index SiO2-E0
+
+# The script get_equilstartstep.sh just looks for the most recent dump file from equilibration, the variable STARTSTEP could be set in many ways by the user.
+# Similar approaches can be used to restart the production run.
+shell bash get_equilstartstep.sh Restarts_${ITER} > Restarts_${ITER}/startstep
+variable STARTSTEP file Restarts_${ITER}/startstep
+
+log Logs_${ITER}/log.md_${MODEL}_${STRUCTURE}_${TEMP}_$L_${ITER}_${PERIOD}_0
+
+units		metal
+atom_style	atomic
+boundary 	p p p 
+
+read_restart Restarts_${ITER}/restart.equilibrate_${MODEL}_${STRUCTURE}_${TEMP}_$L_${ITER}_${PERIOD}.${STARTSTEP}
+
+pair_style allegro
+pair_coeff      * * ${MODEL}.pth O Si
+mass 1 15.9994
+mass 2 28.08
+
+timestep 0.002
+
+compute polarization all allegro polarization 3
+compute polarizability all allegro polarizability 9
+compute borncharges all allegro/atom born_charge 9 1
+
+thermo_style custom step time temp pe etotal press c_polarization[*] c_polarizability[*] spcpu cpuremain
+thermo 1
+
+reset_timestep 0
+
+restart ${RESTARTFREQ} Restarts_${ITER}/restart.md_${MODEL}_${STRUCTURE}_${TEMP}_$L_${ITER}_${PERIOD}.*
+
+dump 4a all custom 10 Dumps_${ITER}/dump.md.${MODEL}.${STRUCTURE}.${TEMP}.$L.${ITER}.${PERIOD}.${STARTSTEP}.bin id type xu yu zu fx fy fz c_borncharges[*]
+dump_modify 4a sort id
+
+fix 2 all nve
+
+run $(v_PERIOD) upto
+

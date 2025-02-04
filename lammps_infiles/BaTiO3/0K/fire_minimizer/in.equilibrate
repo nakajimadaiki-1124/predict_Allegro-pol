@@ -1,0 +1,36 @@
+# Authors: Anders Johansson, Marc Descoteaux
+
+variable L index 1
+variable STRUCTURE index BaTiO3_init
+variable PERIOD index 20000
+variable EQUILSTEPS index 100
+variable MODEL index BaTiO3-E0
+log Logs_1/log.equilibrate_${MODEL}_${STRUCTURE}_$L_${PERIOD}
+
+units		metal
+atom_style	atomic
+
+read_data ${STRUCTURE}.data
+replicate $L $L $L
+
+pair_style allegro
+pair_coeff	* * ${MODEL}.pth Ba O Ti
+mass 1 137.3
+mass 2 15.9994
+mass 3 47.9
+
+timestep 0.002
+compute polarization all allegro polarization 3
+compute polarizability all allegro polarizability 9
+compute borncharges all allegro/atom born_charge 9 1
+
+thermo_style custom pe fmax fnorm spcpu cpuremain
+
+variable efield equal 1e-2*36.36
+fix born all addbornforce 0.0 0.0 ${efield}
+min_style fire
+
+restart $(v_EQUILSTEPS) ./Restarts_1/restart.equilibrate_${MODEL}_${STRUCTURE}_$L_${PERIOD}.*
+
+thermo 10
+minimize 0.0 1e-6 $(v_EQUILSTEPS) $(v_EQUILSTEPS)

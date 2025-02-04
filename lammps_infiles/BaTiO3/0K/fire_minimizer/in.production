@@ -1,0 +1,57 @@
+# Authors: Anders Johansson, Marc Descoteaux
+
+variable L index 1
+variable STRUCTURE index BaTiO3_init
+variable PERIOD index 20000
+variable RESTARTFREQ index 1000 
+variable MODEL index BaTiO3-E0
+
+# The script get_equilstartstep.sh just looks for the most recent dump file from equilibration, the variable STARTSTEP could be set in many ways by the user.
+# Similar approaches can be used to restart the production run.
+shell bash get_equilstartstep.sh Restarts_1 > Restarts_1/startstep
+variable STARTSTEP file Restarts_1/startstep
+
+log Logs_1/log.relax_${MODEL}_${STRUCTURE}_$L_${PERIOD}_0
+
+units		metal
+atom_style	atomic
+boundary 	p p p 
+
+read_restart Restarts_1/restart.equilibrate_${MODEL}_${STRUCTURE}_$L_${PERIOD}.${STARTSTEP}
+
+pair_style allegro
+pair_coeff      * * ${MODEL}.pth Ba O Ti
+mass 1 137.3
+mass 2 15.9994
+mass 3 47.9
+
+timestep 0.002
+
+compute polarization all allegro polarization 3
+compute polarizability all allegro polarizability 9
+compute borncharges all allegro/atom born_charge 9 1
+
+thermo_style custom pe fmax fnorm spcpu cpuremain
+
+reset_timestep 0
+
+variable interval equal 50
+thermo ${interval}
+
+restart ${RESTARTFREQ} Restarts_1/restart.relax_${MODEL}_${STRUCTURE}_$L_${PERIOD}.*
+
+variable nintervals equal $(v_PERIOD/v_interval)
+variable efield equal 1e-2*36.36*cos((step/${PERIOD})*2*3.14)
+fix born all addbornforce 0.0 0.0 v_efield
+
+variable Pz equal (f_born[3]+c_polarization[3])/vol
+variable pe equal pe
+
+thermo_style custom step time temp press pe f_born v_efield v_Pz fmax fnorm spcpu cpuremain
+
+dump 4a all custom 10 Dumps_1/dump.relax.${MODEL}.${STRUCTURE}.$L.${PERIOD}.${STARTSTEP}.bin id type xu yu zu fx fy fz
+dump_modify 4a sort id
+
+min_style fire
+
+minimize 0.0 1e-6 $(2*v_PERIOD) $(2*v_PERIOD)

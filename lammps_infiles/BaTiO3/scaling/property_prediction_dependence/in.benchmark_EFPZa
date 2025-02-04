@@ -1,0 +1,49 @@
+# Authors: Anders Johansson, Marc Descoteaux
+
+variable N index 1
+variable L index 1
+variable STRUCTURE index BaTiO3_supercell_init
+variable PERIOD index 1000000
+variable TEMP index 300
+variable MODEL index BaTiO3-E0
+variable SEED index 1
+variable ITER index 1
+
+log Logs_${L}_${N}_${ITER}_EFPZa/log.hyst_${MODEL}_${STRUCTURE}_${TEMP}_${L}-${L}-${L}_${ITER}
+
+units		metal
+atom_style	atomic
+
+read_data ${STRUCTURE}.data
+replicate ${L} ${L} ${L} 
+
+pair_style allegro
+pair_coeff	* * ${MODEL}.pth Ba O Ti
+mass 1 137.3
+mass 2 15.9994
+mass 3 47.9
+
+timestep 0.002
+compute polarization all allegro polarization 3
+compute polarizability all allegro polarizability 9
+compute borncharges all allegro/atom born_charge 9 1
+
+thermo_style custom pe fmax fnorm spcpu cpuremain 
+
+variable efield equal 1e-2*36.36
+fix born all addbornforce 0.0 0.0 ${efield}
+
+thermo 1
+thermo_style custom step time temp press pe f_born v_efield c_polarization[*] c_polarizability[*] spcpu cpuremain
+
+velocity all create ${TEMP} ${SEED} dist gaussian rot yes mom yes
+fix nvt all nvt temp ${TEMP} ${TEMP} $(100*dt)
+
+#Run for max 10 seconds to break torchscript optimization
+fix stop all halt 5 tlimit > 10 error continue
+run $(v_PERIOD)
+reset_timestep 0
+#Run for max 30 seconds to evaluate speed.
+fix stop all halt 5 tlimit > 30 error continue
+run $(v_PERIOD)
+
