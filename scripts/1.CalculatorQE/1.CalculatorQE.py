@@ -2,8 +2,35 @@
 QE input generator for calculations under zero and finite electric fields.
 Author: S. Falletta
 
-Generates QE input files for trajectory files under zero field and small 
-finite electric fields along x, y, and z. Requires extxyz format.
+This script generates Quantum Espresso (QE) input files for trajectory 
+calculations under zero field and small finite electric fields along x y z
+directions. The module requires trajectory files in extxyz format.
+
+The script generates QE input files for:
+• Zero field calculations
+• Finite electric field calculations along x, y, z directions
+• Multiple frames from trajectory files
+• Different material systems (SiO2, BaTiO3)
+
+How to run:
+• SiO2:   python calculator_QE.py SiO2
+• BaTiO3: python calculator_QE.py BaTiO3
+
+Before using this script, make sure your trajectory files are organized as follows:
+• SiO2:   SiO2/SiO2-T300.xyz, SiO2/SiO2-T600.xyz
+• BaTiO3: BaTiO3/BaTiO3.xyz, BaTiO3/BaTiO3-wall.xyz
+
+The script will create directories for each frame and field condition:
+• For zero field: {system}/{prefix}-E0-{frame}/
+• For finite field: {system}/{prefix}-E{x,y,z}-{frame}/
+
+Material-specific parameters are configured in MATERIAL_CONFIG dictionary:
+• ibrav: Bravais lattice index
+• nbnd: Number of bands
+• species: List of atomic species with masses and pseudopotentials
+• k_points: K-point mesh configuration
+• efield_magnitude: Electric field strength for finite field calculations
+
 """
 
 import numpy as np
@@ -41,9 +68,38 @@ MATERIAL_CONFIG = {
 }
 
 class QEGenerator:
+    """
+    A class to generate Quantum Espresso input files.
+
+    This class handles the creation of QE input files with configurable 
+    parameters for different types of calculations, including those under 
+    electric fields.
+
+    Attributes:
+        output_file (str): Path to the output QE input file
+        frame_data (str): Raw frame data in extxyz format
+        control_params (dict): Parameters for the CONTROL section
+        system_params (dict): Parameters for the SYSTEM section
+        electron_params (dict): Parameters for the ELECTRONS section
+        atomic_species (list): List of atomic species configurations
+        k_points (list): K-point mesh configuration
+        atomic_positions (list): Atomic positions data
+        atoms (list): List of atom coordinates and types
+    """
+
     def __init__(
         self, output_file, prefix, pseudo_dir, outdir, frame_data=None
     ):
+        """
+        Initialize the QEGenerator with basic parameters.
+
+        Args:
+            output_file (str): Path where the QE input file will be written
+            prefix (str): Prefix for the calculation
+            pseudo_dir (str): Directory containing pseudopotential files
+            outdir (str): Directory for calculation output
+            frame_data (str, optional): Raw frame data in extxyz format
+        """
         self.output_file = output_file
         self.frame_data = frame_data
         
@@ -82,15 +138,44 @@ class QEGenerator:
         self.atoms = []
 
     def set_params(self, param_dict, **kwargs):
+        """
+        Update parameters in the specified parameter dictionary.
+
+        Args:
+            param_dict (dict): Dictionary of parameters to update
+            **kwargs: Keyword arguments containing parameter updates
+        """
         param_dict.update(kwargs)
 
     def set_atomic_species(self, species_list):
+        """
+        Set the atomic species configuration.
+
+        Args:
+            species_list (list): List of tuples containing (element, mass, pseudopotential)
+        """
         self.atomic_species = species_list
 
     def set_k_points(self, k_points):
+        """
+        Set the k-points mesh configuration.
+
+        Args:
+            k_points (list): List of 6 integers defining the k-points mesh and shift
+        """
         self.k_points = k_points
 
     def set_atomic_positions(self):
+        """
+        Process frame data to set atomic positions and cell parameters.
+
+        This method parses the extxyz format frame data to extract atomic 
+        positions and cell parameters. It also updates the system parameters 
+        with the cell dimensions and angles.
+
+        Raises:
+            ValueError: If no frame data is provided or if not in extxyz format
+        """
         if not self.frame_data:
             raise ValueError("No frame data provided")
             
@@ -119,6 +204,12 @@ class QEGenerator:
         )
 
     def write_qe_input(self):
+        """
+        Write the Quantum Espresso input file.
+
+        This method writes all the configured parameters and atomic structure
+        information to the output file in the QE input format.
+        """
         def format_param(key, value):
             return f"    {key:<18}= {repr(value)}\n"
 
@@ -151,6 +242,20 @@ class QEGenerator:
 
 
 def process_trajectory(system, traj_file):
+    """
+    Process a trajectory file and generate QE inputs for each frame.
+
+    This function reads a trajectory file and generates QE input files for
+    calculations under zero field and finite electric fields along x, y, 
+    and z directions for each frame.
+
+    Args:
+        system (str): Material system name ('SiO2' or 'BaTiO3')
+        traj_file (str): Path to the trajectory file in extxyz format
+
+    Raises:
+        ValueError: If the specified material system is not implemented
+    """
     if system not in MATERIAL_CONFIG:
         raise ValueError(f"Material {system} not implemented")
 
@@ -211,7 +316,8 @@ def process_trajectory(system, traj_file):
             qe.write_qe_input()
 
 
-def main():
+if __name__ == '__main__':
+
     if len(sys.argv) < 2:
         print("Usage: python calculator_QE.py <material>")
         sys.exit(1)
@@ -228,7 +334,3 @@ def main():
         
     for traj in traj_files[system]:
         process_trajectory(system, traj)
-
-
-if __name__ == '__main__':
-    main()
