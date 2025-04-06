@@ -132,11 +132,6 @@ MATERIAL_CONFIGS = {
     }
 }
 
-
-# ==============
-# Plot Functions
-# ==============
-
 def axis_settings(ax):
     """Configure axis settings for plots."""
     for axis in ["top", "bottom", "left", "right"]:
@@ -171,10 +166,6 @@ def plot_init(label_x, label_y, title):
     plt.ylabel(label_y)
     plt.title(title)
 
-
-# ======================
-# Parser for QE XML File
-# ======================
 
 class Atom:
     """Class representing an atom with its properties."""
@@ -319,10 +310,6 @@ class QE_xmlfile:
         Pnew = np.dot(np.linalg.inv(self.g), Pnew)
         return Pnew
 
-
-# ====================
-# Dataset Construction
-# ====================
 
 class Material:
     """
