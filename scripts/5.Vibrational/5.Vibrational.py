@@ -24,24 +24,6 @@ TODO: Generalize to the case of non-orthorombic cells
 Author: S. Falletta
 """
 
-# Material-specific configurations
-MATERIAL_CONFIG = {
-    "SiO2": {
-        "files_mlmd": ["SiO2/ML/SiO2-mlmd.dat"],
-        "files_dfpt": [
-            "SiO2/DFPT/SiO2-IR-dfpt.dat",
-            "SiO2/DFPT/SiO2-epsre-dfpt.dat",
-            "SiO2/DFPT/SiO2-epsim-dfpt.dat"
-        ],  # calculated with QE
-        "ωi": 0,
-        "ωf": 1400,
-        "temp": 300,
-        "do_IR": True,
-        "do_Raman": False
-    },
-    # Add new materials here following the same structure
-}
-
 # Standard library imports
 import os
 import subprocess
@@ -68,6 +50,24 @@ c_mlmd = "#0055d4"
 # Extra settings
 plot_smeared = True  # plot results with smearing included
 freq_damp = True  # damp non-vanishing real part of autocorr function at large frequency
+
+# Material-specific configurations
+MATERIAL_CONFIG = {
+    "SiO2": {
+        "files_mlmd": ["SiO2/ML/SiO2-mlmd.dat"],
+        "files_dfpt": [
+            "SiO2/DFPT/SiO2-IR-dfpt.dat",
+            "SiO2/DFPT/SiO2-epsre-dfpt.dat",
+            "SiO2/DFPT/SiO2-epsim-dfpt.dat"
+        ],  # calculated with QE
+        "ωi": 0,
+        "ωf": 1400,
+        "temp": 300,
+        "do_IR": True,
+        "do_Raman": False
+    },
+    # Add new materials here following the same structure
+}
 
 # Set matplotlib parameters
 plt.rcParams.update({
@@ -175,7 +175,7 @@ class Spectroscopy:
         """
         # General
         L = file_mlmd.split("/")
-        self.pdfname = L[0] + "/" + L[-1][:-4] + ".pdf"
+        self.pdfname = f"{L[0]}/{L[-1][:-4]}.pdf"
         self.temp = temp
         self.ωi = ωi
         self.ωf = ωf
