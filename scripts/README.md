@@ -22,4 +22,4 @@ In this tutorial, we provide a step-by-step guide for pre-processing and post-pr
 
 ### Additional Utilities:
 
-- `combine_LAMMPS_restarts/`: Contains scripts to combine LAMMPS restart files.
+- `combine_LAMMPS_restarts`: Contains scripts to combine LAMMPS restart files.
