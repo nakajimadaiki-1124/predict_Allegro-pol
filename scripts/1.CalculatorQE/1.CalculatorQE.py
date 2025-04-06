@@ -1,6 +1,5 @@
 """
 QE input generator for calculations under zero and finite electric fields.
-Author: S. Falletta
 
 This script generates Quantum Espresso (QE) input files for trajectory 
 calculations under zero field and small finite electric fields along x y z
@@ -31,6 +30,7 @@ Material-specific parameters are configured in MATERIAL_CONFIG dictionary:
 • k_points: K-point mesh configuration
 • efield_magnitude: Electric field strength for finite field calculations
 
+Author: S. Falletta
 """
 
 import numpy as np

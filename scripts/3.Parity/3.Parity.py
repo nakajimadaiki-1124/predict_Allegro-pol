@@ -5,8 +5,6 @@
 # ===========
 
 """
-Author: S. Falletta
-
 This script produces parity plots comparing DFT and ML predictions for various
 physical quantities. The script reads two extended XYZ files:
 1. DFT reference data
@@ -39,6 +37,8 @@ Units in the extxyz files:
 • Polarization in e*A
 • Born charges in e
 • Polarizabilities in e*A^2*V^{-1}
+
+Author: S. Falletta
 """
 
 # Libraries

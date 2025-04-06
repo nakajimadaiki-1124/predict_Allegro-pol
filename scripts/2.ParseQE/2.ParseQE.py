@@ -5,8 +5,6 @@
 # ==============================
 
 """
-Author: S. Falletta
-
 This script parses QE xml files obtained performing calculations under finite
 electric fields, and returns an extxyz file with the dataset containing 
 energy, atomic positions, forces, polarization, polarizability, stress, Born 
@@ -73,6 +71,8 @@ Units in the extxyz file:
 • Polarization in e*A
 • Born charges in e
 • Polarizabilities in e*A^2*V^{-1}
+
+Author: S. Falletta
 """
 
 # Libraries
