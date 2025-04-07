@@ -11,7 +11,7 @@ allow_tf32:    true
 
 # -- network --
 model_builders: 
- - nequip_pol.model.Allegro
+ - allegro_pol.model.Allegro
  - PerSpeciesRescale
  - PairPotentialTerm
  - allegro_pol.model.ForceStressPolarizationOutput
@@ -57,7 +57,7 @@ electric_field_normalization: 1.0 # mean squared electric field magnitude
 
 # -- data --
 dataset:            ase                                                                   
-dataset_file_name:  data/BaTiO3.xyz
+dataset_file_name:  ../data/BaTiO3.xyz
 include_keys: 
   - total_energy
   - polarization
