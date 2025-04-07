@@ -1,0 +1,46 @@
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "allegro-pol"
+dynamic = ["version"]
+description = "allegro-pol is an extension package of the nequip framework that adapts the Allegro architecture (another nequip extension package) for the prediction of the electric response of materials (polarization, Born charges, polarizability) in addition to energy and forces within a single ML model."
+readme = "README.md"
+requires-python = ">=3.9"
+license = {file = "LICENSE"}
+authors = [
+    {name = "Materials Intelligence Research Group"},
+]
+dependencies = [
+    "nequip==0.6.2",
+    "nequip-allegro==0.3.0",
+]
+
+[project.urls]
+Repository = "https://github.com/mir-group/allegro-pol"
+
+[tool.setuptools]
+packages = {find = {include = ["allegro_pol", "allegro_pol.*"]}}
+
+[tool.setuptools.dynamic]
+version = {attr = "allegro_pol._version.__version__"}
+
+[tool.flake8]
+max-line-length = 127
+select = ["E", "F", "W", "C"]
+ignore = ["E226", "E501", "E741", "E743", "C901", "W503", "E203"]
+exclude = [
+    ".eggs",
+    "*.egg",
+    "build",
+    "dist",
+    "docs",
+    ".git",
+    "__pycache__",
+    "examples",
+    "tmp"
+]
+
+[project.entry-points."nequip.extension"]
+init_always = "allegro_pol"
