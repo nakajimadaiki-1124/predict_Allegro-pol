@@ -19,7 +19,8 @@ setup(
     python_requires=">=3.9",
     packages=find_packages(include=[name, _name, _name + ".*"]),
     install_requires=[
-        "nequip==0.6.1",
+        "nequip==0.6.2",
+        "nequip-allegro==0.3.0",
     ],
     zip_safe=True,
     entry_points={"nequip.extension": ["init_always = allegro_pol"]},
