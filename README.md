@@ -15,7 +15,7 @@ conda activate allegro-pol
 
 It may be advisable to install an older version of PyTorch (e.g. PyTorch 1.11).
 
-Then, install `allegro-pol`, whcih will install all essential dependencies.
+Then, install `allegro-pol`, which will install all essential dependencies.
 ```
 git clone https://github.com/mir-group/allegro-pol.git
 cd allegro-pol
@@ -41,14 +41,17 @@ Pre- and post-processing scripts can be found in `scripts`, along with a tutoria
 
 ## Cite
 
-If you use this code in your own work, please cite [our work](https://arxiv.org/abs/2403.17207):
+If you use this code in your own work, please cite [our work](https://www.nature.com/articles/s41467-025-59304-1):
 ```
-@article{falletta2024arxiv,
-  title={Unified Differentiable Learning of Electric Response}, 
-  author={Stefano Falletta and Andrea Cepellotti and Anders Johansson and Chuin Wei Tan and Albert Musaelian and Cameron J. Owen and Boris Kozinsky},
-  journal={arXiv:2403.17207},
-  year={2024},
-  url={https://arxiv.org/abs/2403.17207}, 
+@article{falletta2025unified,
+  title={Unified differentiable learning of electric response},
+  author={Falletta, Stefano and Cepellotti, Andrea and Johansson, Anders and Tan, Chuin Wei and Descoteaux, Marc L and Musaelian, Albert and Owen, Cameron J and Kozinsky, Boris},
+  journal={Nature Communications},
+  volume={16},
+  number={1},
+  pages={4031},
+  year={2025},
+  publisher={Nature Publishing Group UK London}
 }
 ```
 
