@@ -113,7 +113,7 @@ celerybeat.pid
 
 # Environments
 .env
-.venv
+#.venv
 env/
 venv/
 ENV/
@@ -145,3 +145,13 @@ dmypy.json
 cython_debug/
 
 .vscode/
+
+._*
+
+slurm_run_vasp.sh
+
+std.log
+
+results
+
+._.gitignore
