@@ -1,232 +1,402 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+"""Run inference with a trained Allegro/NequIP model and generate parity plots.
 
+This script follows the agreed workflow:
+
+1. Load a configuration YAML file while ignoring any custom Python tags.
+2. Build the model via :func:`nequip.model.model_from_config` and load the provided
+   weights.
+3. Predict total energy, polarization, and polarizability for each frame of a test
+   extxyz file.  The predictions are stored in ``Atoms.info`` with a
+   ``predicted_`` prefix and written to a new extxyz file.
+4. Generate a parity plot PDF comparing the DFT reference values with the
+   predictions for all available quantities.
+
+<<<<<<< ours
+=======
+The input/output paths are configured via module-level constants so the script
+can be executed without command-line arguments.
+
+>>>>>>> theirs
+Force and stress outputs are intentionally ignored.
 """
-Test a trained NequIP/Allegro model on a dataset,
-save predictions into an XYZ file, and generate parity plots
-(DFT vs ML) for energy, polarization, polarizability, born charges.
 
-- 学習は行わない（損失関数は無視）
-- YAML のカスタムタグは安全に無視して読込
-- force, stress は扱わない
-- 予測はフレーム info / arrays に "predicted_*" として保存
-- DFT(正解) と ML(予測) のパリティプロット PDF を出力
-"""
+from __future__ import annotations
 
-import os
-import yaml
-import torch
+<<<<<<< ours
+import argparse
+=======
+>>>>>>> theirs
+import logging
+from pathlib import Path
+from typing import Dict, Iterable, List, Optional, Tuple
+
+import matplotlib
+
+matplotlib.use("Agg")  # non-interactive backend for headless environments
+import matplotlib.pyplot as plt
 import numpy as np
-from tqdm import tqdm
+import torch
+import yaml
+from ase import Atoms
 from ase.io import read, write
+from matplotlib.backends.backend_pdf import PdfPages
+from sklearn.metrics import mean_absolute_error, mean_squared_error
+from tqdm import tqdm
 
-# NequIP / Allegro
-from nequip.utils import Config
-from nequip.model import model_from_config
 from nequip.data import AtomicData
 from nequip.data.transforms import TypeMapper
+from nequip.model import model_from_config
+from nequip.utils import Config
 
-# ==========
-# 設定ここ
-# ==========
-CONFIG_PATH = "configs/BaTiO3.yaml"
-MODEL_PATH  = "results/20250908/BaTiO3/best_model.pth"   # best_model.pth を使う
-TEST_XYZ    = "data/BaTiO3.xyz"                          # DFT(正解)の extxyz
-OUT_DIR     = "test_results"
-ML_XYZ      = os.path.join(OUT_DIR, "BaTiO3-ML.xyz")     # 予測を書き出す extxyz
-OUT_PDF     = os.path.join(OUT_DIR, "BaTiO3-parity.pdf") # パリティPDF
+# -----------------------------------------------------------------------------
+<<<<<<< ours
+# YAML loader that safely ignores unsupported Python-specific tags
+# -----------------------------------------------------------------------------
 
-# =======================================================
-# YAML のカスタムタグを無視して安全に読むためのローダー
-# =======================================================
-class SafeFullLoader(yaml.FullLoader):
-    pass
 
-def _unknown_constructor(loader, tag_suffix, node):
-    # 未知の Python オブジェクトやタプル等は無視（None）
+class SafeIgnoreUnknownLoader(yaml.SafeLoader):
+    """YAML loader that replaces unknown python tags with ``None``."""
+
+
+=======
+# Default in-repository paths (edit here to point to your files)
+# -----------------------------------------------------------------------------
+
+BASE_DIR = Path(__file__).resolve().parent
+CONFIG_PATH = Path("configs/BaTiO3.yaml")
+WEIGHTS_PATH = Path("results/20250908/BaTiO3/best_model.pth")
+TEST_XYZ_PATH = Path("data/BaTiO3.xyz")
+OUTPUT_DIR = Path("test_results")
+DEVICE_SPEC = "auto"
+LOG_LEVEL = "INFO"
+
+# -----------------------------------------------------------------------------
+# YAML loader that safely ignores unsupported Python-specific tags
+# -----------------------------------------------------------------------------
+
+
+class SafeIgnoreUnknownLoader(yaml.SafeLoader):
+    """YAML loader that replaces unknown python tags with ``None``."""
+
+
+>>>>>>> theirs
+def _ignore_unknown_constructor(loader: SafeIgnoreUnknownLoader, tag_suffix: str, node: yaml.Node):
+    del tag_suffix  # unused
+    del node  # unused
     return None
 
-SafeFullLoader.add_multi_constructor("tag:yaml.org,2002:python/object:", _unknown_constructor)
-SafeFullLoader.add_multi_constructor("tag:yaml.org,2002:python/tuple", _unknown_constructor)
 
-def load_config_safely(path: str) -> dict:
-    with open(path, "r") as f:
-        cfg = yaml.load(f, Loader=SafeFullLoader)
-    # 推論だけなので avg_num_neighbors=auto は None に潰す
-    if cfg.get("avg_num_neighbors", None) == "auto":
+SafeIgnoreUnknownLoader.add_multi_constructor(
+    "tag:yaml.org,2002:python/object:", _ignore_unknown_constructor
+)
+SafeIgnoreUnknownLoader.add_multi_constructor(
+    "tag:yaml.org,2002:python/tuple", _ignore_unknown_constructor
+)
+
+# -----------------------------------------------------------------------------
+# Configuration helpers
+# -----------------------------------------------------------------------------
+
+
+def load_config_safely(path: Path) -> Dict:
+    """Load a NequIP/Allegro configuration YAML while ignoring custom tags."""
+
+    with path.open("r") as handle:
+        cfg = yaml.load(handle, Loader=SafeIgnoreUnknownLoader)
+
+    if cfg is None:
+        raise ValueError(f"Configuration file {path} is empty or invalid")
+
+    if cfg.get("avg_num_neighbors") == "auto":
         cfg["avg_num_neighbors"] = None
+
+    required_keys = ["r_max", "chemical_symbol_to_type"]
+    missing = [key for key in required_keys if key not in cfg]
+    if missing:
+        raise KeyError(f"Missing required configuration entries: {', '.join(missing)}")
+
+    if not isinstance(cfg["chemical_symbol_to_type"], dict):
+        raise TypeError("chemical_symbol_to_type must be a mapping from symbols to types")
+
     return cfg
 
-# ===================
-# モデルのロード関数
-# ===================
-def load_model_from_config(cfg: dict, model_path: str, device: str):
-    # NequIP の Config 経由でモデル組み立て
-    model = model_from_config(Config.from_dict(cfg))
 
-    # state_dict のキー形式を吸収
-    sd = torch.load(model_path, map_location=device)
-    if isinstance(sd, dict):
-        if "model" in sd and isinstance(sd["model"], dict):
-            sd = sd["model"]
-        elif "model_state_dict" in sd and isinstance(sd["model_state_dict"], dict):
-            sd = sd["model_state_dict"]
-    model.load_state_dict(sd, strict=False)
+def resolve_device(device_arg: str) -> torch.device:
+    """Resolve the requested device string."""
+
+    if device_arg.lower() == "auto":
+        if torch.cuda.is_available():
+            return torch.device("cuda")
+        return torch.device("cpu")
+    return torch.device(device_arg)
+
+
+<<<<<<< ours
+=======
+def resolve_runtime_path(path: Path | str, base_dir: Path) -> Path:
+    """Resolve a path specification relative to ``base_dir``."""
+
+    spec = Path(path)
+    expanded = spec.expanduser()
+    if expanded.is_absolute():
+        return expanded
+    return (base_dir / expanded).resolve()
+
+
+>>>>>>> theirs
+# -----------------------------------------------------------------------------
+# Model loading
+# -----------------------------------------------------------------------------
+
+
+def load_model_from_config(cfg: Dict, weights_path: Path, device: torch.device) -> torch.nn.Module:
+    """Build the model and load the provided weights."""
+
+    config = Config.from_dict(cfg)
+    model = model_from_config(config)
+
+    state = torch.load(weights_path, map_location=device)
+    if isinstance(state, dict):
+        if "model" in state and isinstance(state["model"], dict):
+            state = state["model"]
+        elif "model_state_dict" in state and isinstance(state["model_state_dict"], dict):
+            state = state["model_state_dict"]
+    model.load_state_dict(state, strict=False)
 
     model.to(device)
     model.eval()
+    for param in model.parameters():
+        param.requires_grad_(False)
+
+    logging.info("Model loaded from %s", weights_path)
     return model
 
-# =========================================
-# 予測 → XYZ 保存（force / stress は出さない）
-# =========================================
-def predict_and_save_xyz(model, test_file, out_file, device="cpu"):
-    """テストデータを読み込み、モデル予測してXYZに保存"""
-    from ase.io import read, write
-    import torch
-    from tqdm import tqdm
 
-    frames = read(test_file, ":")  # 全フレーム読み込み
-    results = []
+def infer_model_dtype(model: torch.nn.Module) -> torch.dtype:
+    """Infer the floating point dtype used by the model parameters."""
 
-    # モデルの dtype を取得（モデルに合わせる）
-    try:
-        model_dtype = next(p for p in model.parameters() if p.requires_grad).dtype
-    except StopIteration:
-        model_dtype = torch.float32
+    for param in model.parameters():
+        return param.dtype
+    return torch.get_default_dtype()
 
-    for i, frame in enumerate(tqdm(frames, desc="Predicting")):
+
+# -----------------------------------------------------------------------------
+# Inference and extxyz writing
+# -----------------------------------------------------------------------------
+
+
+def predict_and_save_xyz(
+    model: torch.nn.Module,
+    cfg: Dict,
+    test_xyz: Path,
+    out_xyz: Path,
+    device: torch.device,
+) -> int:
+    """Run inference for each frame and save predictions to an extxyz file."""
+
+    if not test_xyz.exists():
+        raise FileNotFoundError(f"Test structure file not found: {test_xyz}")
+
+    frames_raw = read(str(test_xyz), ":")
+    frames: List[Atoms]
+    if isinstance(frames_raw, list):
+        frames = frames_raw
+    else:
+        frames = [frames_raw]
+
+    if len(frames) == 0:
+        logging.warning("No frames found in %s; skipping prediction", test_xyz)
+        return 0
+
+    mapper = TypeMapper(chemical_symbol_to_type=cfg["chemical_symbol_to_type"])
+    r_max = cfg["r_max"]
+    model_dtype = infer_model_dtype(model)
+
+    target_specs = {
+        "total_energy": ("predicted_total_energy", 1),
+        "polarization": ("predicted_polarization", 3),
+        "polarizability": ("predicted_polarizability", 9),
+    }
+
+    logged_output_keys = False
+    unavailable_targets: Dict[str, bool] = {key: False for key in target_specs}
+    successful_frames: List[Atoms] = []
+
+    for index, frame in enumerate(tqdm(frames, desc="Predicting", unit="frame")):
         try:
-            # 勾配が必要な入力：pos（座標）
-            pos = torch.tensor(
-                frame.positions, dtype=model_dtype, device=device, requires_grad=True
-            )
-            # 勾配は不要：cell, pbc, atomic_numbers
-            cell = torch.tensor(frame.cell.array, dtype=model_dtype, device=device)
-            pbc = torch.tensor(frame.pbc, dtype=torch.bool, device=device)
-            Z   = torch.tensor(frame.numbers, dtype=torch.long, device=device)
+            data = AtomicData.from_ase(frame, r_max=r_max, type_mapper=mapper)
+            data = data.to(device=device, dtype=model_dtype)
 
-            inputs = {
-                "pos": pos,
-                "cell": cell,
-                "pbc": pbc,
-                "atomic_numbers": Z,
-            }
+            with torch.no_grad():
+                outputs = model(data.to_dict())
 
-            # ★ no_grad は使わない ★
-            with torch.set_grad_enabled(True):
-                pred = model(inputs)
+            if not logged_output_keys:
+                logged_output_keys = True
+                available = sorted(outputs.keys())
+                logging.info("Model output keys: %s", ", ".join(available))
+                for quantity in target_specs:
+                    if quantity not in outputs:
+                        logging.warning(
+                            "Model output missing '%s'; predictions for this quantity will be skipped.",
+                            quantity,
+                        )
+                        unavailable_targets[quantity] = True
 
-            # 予測値を info に保存（force/stress は保存しない）
-            info = {}
-            if "total_energy" in pred:
-                # スカラー（shape [1] や [[]]）を float に
-                e = pred["total_energy"]
-                info["predicted_total_energy"] = float(e.detach().cpu().reshape(-1)[0])
-            if "polarization" in pred:
-                P = pred["polarization"].detach().cpu().numpy()
-                info["predicted_polarization"] = P.reshape(-1).tolist()
-            if "polarizability" in pred:
-                A = pred["polarizability"].detach().cpu().numpy()
-                info["predicted_polarizability"] = A.reshape(-1).tolist()
+            predictions: Dict[str, Iterable[float]] = {}
+            for quantity, (info_key, expected_length) in target_specs.items():
+                if unavailable_targets.get(quantity, False):
+                    continue
+                if quantity not in outputs:
+                    unavailable_targets[quantity] = True
+                    continue
 
-            frame.info.update(info)
-            results.append(frame)
+                value = outputs[quantity]
+                if not torch.is_tensor(value):
+                    logging.warning(
+                        "Output '%s' is not a tensor (frame %d); skipping future predictions for this quantity.",
+                        quantity,
+                        index,
+                    )
+                    unavailable_targets[quantity] = True
+                    continue
 
-        except Exception as e:
-            tqdm.write(f"⚠️ frame {i} をスキップ: {e}")
+                value_cpu = value.detach().cpu().reshape(-1)
+                if expected_length == 1:
+                    predictions[info_key] = float(value_cpu[0])
+                else:
+                    if value_cpu.numel() != expected_length:
+                        logging.warning(
+                            "Output '%s' has length %d (expected %d); skipping future predictions for this quantity.",
+                            quantity,
+                            value_cpu.numel(),
+                            expected_length,
+                        )
+                        unavailable_targets[quantity] = True
+                        continue
+                    predictions[info_key] = value_cpu.tolist()
 
-    # 1件も残らないと extxyz が空ファイルになって ASE が怒るので回避
-    if len(results) == 0:
-        raise RuntimeError(
-            "予測に成功したフレームが 0 件です。上のスキップ理由（最初の1〜2件）を確認してください。"
+            if predictions:
+                frame.info.update(predictions)
+
+            successful_frames.append(frame)
+        except Exception as exc:  # pylint: disable=broad-except
+            logging.warning("Frame %d skipped due to error: %s", index, exc)
+            continue
+
+    if len(successful_frames) == 0:
+        logging.warning("No frames were successfully predicted; skipping write to %s", out_xyz)
+        return 0
+
+    out_xyz.parent.mkdir(parents=True, exist_ok=True)
+    write(str(out_xyz), successful_frames, format="extxyz")
+    logging.info("Wrote predictions for %d frames to %s", len(successful_frames), out_xyz)
+    return len(successful_frames)
+
+
+# -----------------------------------------------------------------------------
+# Parity plot utilities
+# -----------------------------------------------------------------------------
+
+
+def _extract_series(frames: List[Atoms], key: str, length: int) -> Optional[np.ndarray]:
+    values: List[np.ndarray] = []
+    for idx, frame in enumerate(frames):
+        if key not in frame.info:
+            logging.warning("Frame %d missing key '%s'", idx, key)
+            return None
+        raw = frame.info[key]
+        arr = np.asarray(raw, dtype=float).reshape(-1)
+        if arr.size == 0:
+            logging.warning("Frame %d key '%s' is empty", idx, key)
+            return None
+        if length == 1:
+            values.append(np.array([float(arr[0])], dtype=float))
+        else:
+            if arr.size != length:
+                logging.warning(
+                    "Frame %d key '%s' has length %d (expected %d)",
+                    idx,
+                    key,
+                    arr.size,
+                    length,
+                )
+                return None
+            values.append(arr.astype(float))
+
+    if not values:
+        return None
+
+    stacked = np.vstack(values)
+    if length == 1:
+        return stacked.reshape(-1)
+    return stacked
+
+
+def _prepare_quantity(
+    dft_frames: List[Atoms],
+    ml_frames: List[Atoms],
+    quantity: str,
+    length: int,
+) -> Optional[Tuple[np.ndarray, np.ndarray]]:
+    dft_key = quantity
+    ml_key = f"predicted_{quantity}"
+
+    dft_values = _extract_series(dft_frames, dft_key, length)
+    if dft_values is None:
+        logging.warning("Skipping '%s' parity plot: missing DFT data", quantity)
+        return None
+
+    ml_values = _extract_series(ml_frames, ml_key, length)
+    if ml_values is None:
+        logging.warning("Skipping '%s' parity plot: missing predictions", quantity)
+        return None
+
+    if dft_values.shape[0] != ml_values.shape[0]:
+        logging.warning(
+            "Skipping '%s' parity plot: frame count mismatch (%d vs %d)",
+            quantity,
+            dft_values.shape[0],
+            ml_values.shape[0],
         )
+        return None
 
-    write(out_file, results, format="extxyz")
-    print(f"✅ 予測XYZを書き出しました: {out_file}（{len(results)} フレーム）")
+    if dft_values.shape[0] == 0:
+        logging.warning("Skipping '%s' parity plot: no frames available", quantity)
+        return None
+<<<<<<< ours
 
-# ==============================
-# extxyz から評価用データを抽出
-# ==============================
-def load_for_metrics(filename: str):
-    """DFT/ML の extxyz から、評価に使う配列を取り出す。"""
-    Fs = read(filename, ":")
-    if not isinstance(Fs, list):
-        Fs = [Fs]
+    return dft_values, ml_values
 
-    energy = []
-    pol = []
-    polz = []
-    zstar = []  # list of (nat, 9)
 
-    for at in Fs:
-        # エネルギー
-        if "total_energy" in at.info:
-            energy.append(float(at.info["total_energy"]))
-        elif "predicted_total_energy" in at.info:
-            # ML 側の読み込みで使う
-            energy.append(float(at.info["predicted_total_energy"]))
-        else:
-            energy.append(np.nan)
+=======
 
-        # 分極
-        if "polarization" in at.info:
-            p = np.asarray(at.info["polarization"], dtype=float).reshape(3)
-        elif "predicted_polarization" in at.info:
-            p = np.asarray(at.info["predicted_polarization"], dtype=float).reshape(3)
-        else:
-            p = np.array([np.nan, np.nan, np.nan], dtype=float)
-        pol.append(p)
+    return dft_values, ml_values
 
-        # 分極率 (3x3)
-        if "polarizability" in at.info:
-            a = np.asarray(at.info["polarizability"], dtype=float).reshape(9)
-        elif "predicted_polarizability" in at.info:
-            a = np.asarray(at.info["predicted_polarizability"], dtype=float).reshape(9)
-        else:
-            a = np.full(9, np.nan, dtype=float)
-        polz.append(a)
 
-        # Born 有効電荷 (nat,9) — arrays に入っている想定
-        if "born_charge" in at.arrays:
-            z = np.asarray(at.arrays["born_charge"], dtype=float)  # (nat,9) 仕様に合わせる
-            # もし (nat,3,3) なら reshape
-            if z.ndim == 3 and z.shape[1:] == (3, 3):
-                z = z.reshape(z.shape[0], 9)
-        elif "predicted_born_charge" in at.arrays:
-            z = np.asarray(at.arrays["predicted_born_charge"], dtype=float)
-            if z.ndim == 3 and z.shape[1:] == (3, 3):
-                z = z.reshape(z.shape[0], 9)
-        else:
-            z = None
-        zstar.append(z)
-
-    energy = np.array(energy, dtype=float)
-    pol = np.array(pol, dtype=float)              # (n,3)
-    polz = np.array(polz, dtype=float)            # (n,9)
-    # zstar は各フレームで nat が違い得るので list のまま返す
-    return dict(energy=energy, polarization=pol, polarizability=polz, born_charge=zstar)
-
-# ==========================
-# パリティプロットのユーティリティ
-# ==========================
-import matplotlib.pyplot as plt
-from matplotlib.backends.backend_pdf import PdfPages
-from sklearn.metrics import mean_absolute_error, mean_squared_error
-
-def parity_plot(ax, y_true, y_pred, title):
+>>>>>>> theirs
+def parity_plot(ax: plt.Axes, y_true: np.ndarray, y_pred: np.ndarray, title: str) -> None:
     mask = np.isfinite(y_true) & np.isfinite(y_pred)
-    y_t = y_true[mask].ravel()
-    y_p = y_pred[mask].ravel()
+    y_t = y_true[mask]
+    y_p = y_pred[mask]
+
     if y_t.size == 0:
-        ax.text(0.5, 0.5, "No valid data", ha="center", va="center")
+        ax.text(0.5, 0.5, "No valid data", transform=ax.transAxes, ha="center", va="center")
         ax.set_title(title)
         return
+
     mae = mean_absolute_error(y_t, y_p)
     rmse = np.sqrt(mean_squared_error(y_t, y_p))
-    ax.scatter(y_t, y_p, alpha=0.6, s=16)
-    lo, hi = min(y_t.min(), y_p.min()), max(y_t.max(), y_p.max())
-    ax.plot([lo, hi], [lo, hi], "r--", linewidth=1.5)
+
+    ax.scatter(y_t, y_p, s=20, alpha=0.7)
+    lo = min(float(y_t.min()), float(y_p.min()))
+    hi = max(float(y_t.max()), float(y_p.max()))
+    if lo == hi:
+        delta = 1.0 if lo == 0.0 else 0.05 * abs(lo)
+        lo -= delta
+        hi += delta
+    ax.plot([lo, hi], [lo, hi], "r--", linewidth=1.2)
     ax.set_xlim(lo, hi)
     ax.set_ylim(lo, hi)
     ax.set_aspect("equal", adjustable="box")
@@ -234,83 +404,177 @@ def parity_plot(ax, y_true, y_pred, title):
     ax.set_xlabel("DFT")
     ax.set_ylabel("ML")
     ax.text(
-        0.05, 0.95, f"MAE={mae:.4g}\nRMSE={rmse:.4g}",
+        0.05,
+        0.95,
+        f"MAE = {mae:.4g}\nRMSE = {rmse:.4g}",
         transform=ax.transAxes,
         va="top",
-        bbox=dict(boxstyle="round", facecolor="wheat", alpha=0.5),
+        ha="left",
         fontsize=9,
+        bbox=dict(boxstyle="round", facecolor="wheat", alpha=0.5),
     )
 
-def make_parity_pdf(dft_xyz: str, ml_xyz: str, out_pdf: str):
-    dft = load_for_metrics(dft_xyz)
-    ml  = load_for_metrics(ml_xyz)
-    os.makedirs(os.path.dirname(out_pdf), exist_ok=True)
 
-    with PdfPages(out_pdf) as pdf:
-        # Energy
-        fig, ax = plt.subplots(figsize=(5, 5))
-        parity_plot(ax, dft["energy"], ml["energy"], "Total Energy")
-        pdf.savefig(fig); plt.close(fig)
+def make_parity_pdf(dft_xyz: Path, ml_xyz: Path, out_pdf: Path) -> None:
+    if not ml_xyz.exists():
+        logging.warning("Predicted XYZ file %s does not exist; skipping parity plot", ml_xyz)
+        return
 
-        # Polarization: x,y,z
+    dft_raw = read(str(dft_xyz), ":")
+    ml_raw = read(str(ml_xyz), ":")
+
+    dft_frames = dft_raw if isinstance(dft_raw, list) else [dft_raw]
+    ml_frames = ml_raw if isinstance(ml_raw, list) else [ml_raw]
+<<<<<<< ours
+
+    plot_jobs: List[Tuple[str, np.ndarray, np.ndarray]] = []
+
+=======
+
+    plot_jobs: List[Tuple[str, np.ndarray, np.ndarray]] = []
+
+>>>>>>> theirs
+    energy_data = _prepare_quantity(dft_frames, ml_frames, "total_energy", 1)
+    if energy_data is not None:
+        plot_jobs.append(("Total Energy", energy_data[0], energy_data[1]))
+
+    polarization_data = _prepare_quantity(dft_frames, ml_frames, "polarization", 3)
+    if polarization_data is not None:
         labels = ["Px", "Py", "Pz"]
-        for i in range(3):
-            fig, ax = plt.subplots(figsize=(5, 5))
-            parity_plot(ax, dft["polarization"][:, i], ml["polarization"][:, i], f"Polarization {labels[i]}")
-            pdf.savefig(fig); plt.close(fig)
+        for comp, label in enumerate(labels):
+            plot_jobs.append(
+                (f"Polarization {label}", polarization_data[0][:, comp], polarization_data[1][:, comp])
+            )
 
-        # Polarizability: 3x3
+    polarizability_data = _prepare_quantity(dft_frames, ml_frames, "polarizability", 9)
+    if polarizability_data is not None:
         for i in range(3):
             for j in range(3):
                 idx = 3 * i + j
-                fig, ax = plt.subplots(figsize=(5, 5))
-                parity_plot(ax, dft["polarizability"][:, idx], ml["polarizability"][:, idx], f"Polarizability α({i},{j})")
-                pdf.savefig(fig); plt.close(fig)
+                plot_jobs.append(
+                    (
+                        f"Polarizability α({i},{j})",
+                        polarizability_data[0][:, idx],
+                        polarizability_data[1][:, idx],
+                    )
+                )
 
-        # Born charges: per-atom (全フレーム連結)
-        dft_bc_all, ml_bc_all = [], []
-        for d_z, m_z in zip(dft["born_charge"], ml["born_charge"]):
-            if d_z is None or m_z is None:
-                continue
-            nat = min(d_z.shape[0], m_z.shape[0])
-            dft_bc_all.append(d_z[:nat, :])  # (nat,9)
-            ml_bc_all.append(m_z[:nat, :])
-        if len(dft_bc_all) > 0:
-            D = np.vstack(dft_bc_all)  # (Ntot,9)
-            M = np.vstack(ml_bc_all)   # (Ntot,9)
-            for i in range(3):
-                for j in range(3):
-                    idx = 3 * i + j
-                    fig, ax = plt.subplots(figsize=(5, 5))
-                    parity_plot(ax, D[:, idx], M[:, idx], f"Born charge Z*({i},{j})")
-                    pdf.savefig(fig); plt.close(fig)
+    if not plot_jobs:
+        logging.warning("No parity plots generated; skipping PDF creation")
+        return
 
-    print(f"✅ パリティプロットPDFを保存しました: {out_pdf}")
+    out_pdf.parent.mkdir(parents=True, exist_ok=True)
 
-# ==========
-# メイン
-# ==========
-def main():
-    print("--- テストスクリプト開始 ---")
-    os.makedirs(OUT_DIR, exist_ok=True)
-    device = "cuda" if torch.cuda.is_available() else "cpu"
-    print(f"使用デバイス: {device}")
+    with PdfPages(str(out_pdf)) as pdf:
+        for title, y_true, y_pred in plot_jobs:
+            fig, ax = plt.subplots(figsize=(5, 5))
+            parity_plot(ax, np.asarray(y_true, dtype=float), np.asarray(y_pred, dtype=float), title)
+            pdf.savefig(fig)
+            plt.close(fig)
 
-    # Config 読込（カスタムタグ無視）
-    cfg = load_config_safely(CONFIG_PATH)
+    logging.info("Parity plot PDF written to %s", out_pdf)
 
-    # モデルロード
-    print("モデル構築・重み読込中...")
-    model = load_model_from_config(cfg, MODEL_PATH, device)
-    print("✅ モデル準備完了")
 
-    # 予測 → XYZ 保存
-    predict_and_save_xyz(model, cfg, TEST_XYZ, ML_XYZ, device=device)
+# -----------------------------------------------------------------------------
+<<<<<<< ours
+# Command-line interface
+# -----------------------------------------------------------------------------
 
-    # パリティ PDF
-    make_parity_pdf(TEST_XYZ, ML_XYZ, OUT_PDF)
 
-    print("--- 全処理完了 ---")
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--config", required=True, type=Path, help="Path to the model configuration YAML")
+    parser.add_argument("--weights", required=True, type=Path, help="Path to the trained model weights (.pth)")
+    parser.add_argument("--test", required=True, type=Path, help="Path to the test extxyz file")
+    parser.add_argument("--outdir", required=True, type=Path, help="Directory to store prediction results")
+    parser.add_argument(
+        "--device",
+        default="auto",
+        help="Computation device (e.g., 'cpu', 'cuda', 'cuda:0', or 'auto' for automatic selection)",
+    )
+    parser.add_argument(
+        "--log-level",
+        default="INFO",
+        help="Logging level (e.g., DEBUG, INFO, WARNING)",
+    )
+    return parser.parse_args()
+
+
+def main() -> None:
+    args = parse_args()
+
+    logging.basicConfig(
+        level=getattr(logging, args.log_level.upper(), logging.INFO),
+        format="%(asctime)s [%(levelname)s] %(message)s",
+    )
+
+    device = resolve_device(args.device)
+    logging.info("Using device: %s", device)
+
+    cfg = load_config_safely(args.config)
+=======
+def main() -> None:
+    logging.basicConfig(
+        level=getattr(logging, LOG_LEVEL.upper(), logging.INFO),
+        format="%(asctime)s [%(levelname)s] %(message)s",
+    )
+
+    device = resolve_device(DEVICE_SPEC)
+    logging.info("Using device: %s", device)
+
+    config_path = resolve_runtime_path(CONFIG_PATH, BASE_DIR)
+    logging.info("Configuration file: %s", config_path)
+    if not config_path.exists():
+        raise FileNotFoundError(f"Configuration file not found: {config_path}")
+
+    cfg = load_config_safely(config_path)
+>>>>>>> theirs
+    logging.info(
+        "Loaded config: r_max=%s, avg_num_neighbors=%s, elements=%s",
+        cfg.get("r_max"),
+        cfg.get("avg_num_neighbors"),
+        ",".join(sorted(cfg["chemical_symbol_to_type"].keys())),
+    )
+
+<<<<<<< ours
+    model = load_model_from_config(cfg, args.weights, device)
+
+    outdir = args.outdir
+    outdir.mkdir(parents=True, exist_ok=True)
+    base_name = args.test.stem
+    ml_xyz = outdir / f"{base_name}-ML.xyz"
+    out_pdf = outdir / f"{base_name}-parity.pdf"
+
+    num_frames = predict_and_save_xyz(model, cfg, args.test, ml_xyz, device)
+=======
+    weights_path = resolve_runtime_path(WEIGHTS_PATH, BASE_DIR)
+    logging.info("Weights file: %s", weights_path)
+    if not weights_path.exists():
+        raise FileNotFoundError(f"Weights file not found: {weights_path}")
+
+    model = load_model_from_config(cfg, weights_path, device)
+
+    outdir = resolve_runtime_path(OUTPUT_DIR, BASE_DIR)
+    logging.info("Output directory: %s", outdir)
+    outdir.mkdir(parents=True, exist_ok=True)
+    test_xyz = resolve_runtime_path(TEST_XYZ_PATH, BASE_DIR)
+    logging.info("Test structures: %s", test_xyz)
+    base_name = test_xyz.stem
+    ml_xyz = outdir / f"{base_name}-ML.xyz"
+    out_pdf = outdir / f"{base_name}-parity.pdf"
+
+    num_frames = predict_and_save_xyz(model, cfg, test_xyz, ml_xyz, device)
+>>>>>>> theirs
+    if num_frames == 0:
+        logging.warning("No frames predicted; parity plot will not be generated")
+        return
+
+<<<<<<< ours
+    make_parity_pdf(args.test, ml_xyz, out_pdf)
+=======
+    make_parity_pdf(test_xyz, ml_xyz, out_pdf)
+>>>>>>> theirs
+
 
 if __name__ == "__main__":
     main()

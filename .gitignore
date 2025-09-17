@@ -155,3 +155,5 @@ std.log
 results
 
 ._.gitignore
+
+._.*
