@@ -4,7 +4,7 @@
 from __future__ import annotations
 import re
 from pathlib import Path
-from typing import Dict, Any, Tuple, List
+from typing import Dict, Any, Tuple
 
 import yaml
 import numpy as np
@@ -16,6 +16,12 @@ from matplotlib.backends.backend_pdf import PdfPages
 
 # Allegro-pol をレジストリに登録
 import allegro_pol  # noqa: F401
+from allegro_pol._keys import (
+    POLARIZATION_KEY,
+    POLARIZABILITY_KEY,
+    BORN_CHARGE_KEY,
+    EXTERNAL_ELECTRIC_FIELD_KEY,
+)
 
 # NequIP
 from nequip.utils.config import Config
@@ -124,13 +130,37 @@ def atoms_to_atomicdata_with_type(atoms, r_max: float, sym2type: Dict[str, int])
     # ここを互換キーで
     types = torch.tensor([sym2type[s] for s in atoms.get_chemical_symbols()], dtype=torch.long)
     data[TYPE_KEY] = types
+
+    # Allegro-pol specific: external electric field is required even for inference.
+    # If not provided by the dataset (common for zero-field structures), inject zeros.
+    if EXTERNAL_ELECTRIC_FIELD_KEY not in data:
+        if AtomicDataDict.BATCH_PTR_KEY in data:
+            ptr = data[AtomicDataDict.BATCH_PTR_KEY]
+            # ptr is shape (n_graph + 1,), final value == number of nodes
+            num_batch = int(ptr.shape[0] - 1)
+        elif AtomicDataDict.BATCH_KEY in data:
+            batch = data[AtomicDataDict.BATCH_KEY]
+            num_batch = int(batch.max().item() + 1) if batch.numel() > 0 else 1
+        else:
+            num_batch = 1
+        elec_field = torch.zeros(
+            (num_batch, 3),
+            dtype=data[AtomicDataDict.POSITIONS_KEY].dtype,
+        )
+        data[EXTERNAL_ELECTRIC_FIELD_KEY] = elec_field
     return data
 
 # --- 1フレーム推論 ---
-def predict_one(model: nn.Module, atoms, r_max: float, sym2type: Dict[str, int]) -> Tuple[float, np.ndarray, np.ndarray]:
+def predict_one(
+    model: nn.Module,
+    atoms,
+    r_max: float,
+    sym2type: Dict[str, int],
+) -> Tuple[float, np.ndarray, np.ndarray, np.ndarray]:
     data = atoms_to_atomicdata_with_type(atoms, r_max=r_max, sym2type=sym2type).to(device=DEVICE)
-    with torch.no_grad():
-        out = model(data)  # type: ignore
+
+    # 勾配情報から分極やボルン有効電荷を得るため、no_grad は使用しない
+    out = model(data)  # type: ignore
 
     # energy
     if "total_energy" in out:
@@ -140,29 +170,48 @@ def predict_one(model: nn.Module, atoms, r_max: float, sym2type: Dict[str, int])
     else:
         raise KeyError("モデル出力に 'total_energy' も 'energy' も見つかりません。")
 
-    # polarization / polarizability
-    pol_key = "polarization"
-    if pol_key not in out:
+    # polarization / polarizability / born charge
+    if POLARIZATION_KEY not in out:
         for alt in ("P", "dipole", "electric_polarization"):
-            if alt in out: pol_key = alt; break
+            if alt in out:
+                pol_key = alt
+                break
         else:
             raise KeyError("モデル出力に 'polarization' が見つかりません。")
+    else:
+        pol_key = POLARIZATION_KEY
 
-    polz_key = "polarizability"
-    if polz_key not in out:
+    if POLARIZABILITY_KEY not in out:
         for alt in ("alpha", "dielectric_polarizability"):
-            if alt in out: polz_key = alt; break
+            if alt in out:
+                polz_key = alt
+                break
         else:
             raise KeyError("モデル出力に 'polarizability' が見つかりません。")
+    else:
+        polz_key = POLARIZABILITY_KEY
+
+    if BORN_CHARGE_KEY not in out:
+        for alt in ("Zb", "borncharges"):
+            if alt in out:
+                born_key = alt
+                break
+        else:
+            raise KeyError("モデル出力に 'born_charge' が見つかりません。")
+    else:
+        born_key = BORN_CHARGE_KEY
 
     p = out[pol_key].detach().cpu().numpy().reshape(3)
     a = out[polz_key].detach().cpu().numpy().reshape(3, 3)
-    return e, p, a
+    born = out[born_key].detach().cpu().numpy().reshape(len(atoms), 3, 3)
+    return e, p, a, born
 
 # --- コメント行から真値(energy, P, A)を抜く ---
 _NUM = r"[-+]?\d+(?:\.\d+)?(?:[eE][-+]?\d+)?"
-def extract_labels_from_comment(xyz_path: Path) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
-    energies, pols, polzs = [], [], []
+def extract_labels_from_comment(
+    xyz_path: Path,
+) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    energies, pols, polzs, borns = [], [], [], []
     with open(xyz_path, "r") as f:
         while True:
             nline = f.readline()
@@ -183,16 +232,42 @@ def extract_labels_from_comment(xyz_path: Path) -> Tuple[np.ndarray, np.ndarray,
             p = np.fromstring(m_p.group(1), sep=" ", dtype=float)
             a = np.fromstring(m_a.group(1), sep=" ", dtype=float).reshape(3, 3)
 
-            energies.append(e); pols.append(p); polzs.append(a)
-
+            frame_born = []
             for _ in range(natoms):
-                f.readline()
+                line = f.readline()
+                if not line:
+                    raise RuntimeError("XYZ の途中でファイルが終了しました。")
+                parts = line.split()
+                if len(parts) < 1 + 3 + 9:
+                    raise RuntimeError("原子行の列数が不足しています。")
+                born_vals = np.fromiter((float(x) for x in parts[4:13]), dtype=float, count=9)
+                frame_born.append(born_vals.reshape(3, 3))
+
+            energies.append(e)
+            pols.append(p)
+            polzs.append(a)
+            borns.append(np.stack(frame_born))
     if not energies:
         raise RuntimeError("XYZからフレームが抽出できませんでした。")
-    return np.asarray(energies, float), np.vstack(pols), np.stack(polzs)
+    return (
+        np.asarray(energies, float),
+        np.vstack(pols),
+        np.stack(polzs),
+        np.stack(borns),
+    )
 
 # --- パリティPDF ---
-def parity_pdf(e_true, e_pred, p_true, p_pred, a_true, a_pred, out_pdf: Path):
+def parity_pdf(
+    e_true,
+    e_pred,
+    p_true,
+    p_pred,
+    a_true,
+    a_pred,
+    z_true,
+    z_pred,
+    out_pdf: Path,
+):
     out_pdf.parent.mkdir(parents=True, exist_ok=True)
     with PdfPages(str(out_pdf)) as pdf:
         # Energy
@@ -226,6 +301,16 @@ def parity_pdf(e_true, e_pred, p_true, p_pred, a_true, a_pred, out_pdf: Path):
         plt.title("Parity: Polarizability (per-component)")
         pdf.savefig(fig); plt.close(fig)
 
+        # Born effective charge
+        fig = plt.figure()
+        plt.scatter(z_true.reshape(-1), z_pred.reshape(-1), alpha=0.7)
+        lo, hi = float(min(z_true.min(), z_pred.min())), float(max(z_true.max(), z_pred.max()))
+        plt.plot([lo, hi], [lo, hi], linestyle="--")
+        plt.xlabel("DFT Born charge components")
+        plt.ylabel("Predicted Born charge components")
+        plt.title("Parity: Born effective charge (per-component)")
+        pdf.savefig(fig); plt.close(fig)
+
 # --- メイン ---
 def main():
     cfg = yaml_load_loose(TRAIN_YAML)
@@ -235,17 +320,18 @@ def main():
     model = build_model(TRAIN_YAML, MODEL_PATH)
 
     frames = read(str(INPUT_XYZ), ":")
-    e_true, p_true, a_true = extract_labels_from_comment(INPUT_XYZ)
+    e_true, p_true, a_true, z_true = extract_labels_from_comment(INPUT_XYZ)
     if len(frames) != len(e_true):
         raise RuntimeError(f"フレーム数不一致: ASE={len(frames)} / labels={len(e_true)}")
 
-    e_pred, p_pred, a_pred = [], [], []
+    e_pred, p_pred, a_pred, z_pred = [], [], [], []
     for atoms in frames:
-        e_p, p_p, a_p = predict_one(model, atoms, r_max, sym2type)
+        e_p, p_p, a_p, z_p = predict_one(model, atoms, r_max, sym2type)
         atoms.info["predicted_total_energy"]   = float(e_p)
         atoms.info["predicted_polarization"]   = p_p.tolist()
         atoms.info["predicted_polarizability"] = a_p.reshape(-1).tolist()
-        e_pred.append(e_p); p_pred.append(p_p); a_pred.append(a_p)
+        atoms.arrays["predicted_born_charge"]  = z_p.reshape(len(atoms), -1)
+        e_pred.append(e_p); p_pred.append(p_p); a_pred.append(a_p); z_pred.append(z_p)
 
     OUTPUT_XYZ.parent.mkdir(parents=True, exist_ok=True)
     write(str(OUTPUT_XYZ), frames)
@@ -254,6 +340,7 @@ def main():
         e_true=e_true, e_pred=np.asarray(e_pred),
         p_true=p_true, p_pred=np.vstack(p_pred),
         a_true=a_true, a_pred=np.stack(a_pred),
+        z_true=z_true, z_pred=np.stack(z_pred),
         out_pdf=OUTPUT_PDF,
     )
 
