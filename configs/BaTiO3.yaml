@@ -1,4 +1,4 @@
-root: results/20250917
+root: results/20250908
 run_name: BaTiO3
 seed: 123456
 dataset_seed: 123456
@@ -47,7 +47,7 @@ edge_eng_mlp_initialization: uniform
 irreps_elec_field_sh: 1
 electric_field_normalization: 1.0
 dataset: ase
-dataset_file_name: data/BaTiO3_split/train_val_data.xyz
+dataset_file_name: data/BaTiO3.xyz
 include_keys:
 - total_energy
 - polarization
@@ -58,7 +58,7 @@ chemical_symbol_to_type:
   Ti: 1
   O: 2
 n_train: 47
-n_val: 6
+n_val: 12
 batch_size: 1
 max_epochs: 1000000
 learning_rate: 0.001
