@@ -157,10 +157,12 @@ def predict_one(
     r_max: float,
     sym2type: Dict[str, int],
 ) -> Tuple[float, np.ndarray, np.ndarray, np.ndarray]:
-    data = atoms_to_atomicdata_with_type(atoms, r_max=r_max, sym2type=sym2type).to(device=DEVICE)
+    data = atoms_to_atomicdata_with_type(atoms, r_max=r_max, sym2type=sym2type)
+    data = data.to(device=DEVICE)
+    data_dict = data.to_dict()
 
     # 勾配情報から分極やボルン有効電荷を得るため、no_grad は使用しない
-    out = model(data)  # type: ignore
+    out = model(data_dict)  # type: ignore
 
     # energy
     if "total_energy" in out:
