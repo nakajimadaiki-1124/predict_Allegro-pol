@@ -22,6 +22,8 @@ from nequip.utils.config import Config
 from nequip.model import model_from_config
 from nequip.data import AtomicData, AtomicDataDict
 
+TYPE_KEY = AtomicDataDict.ATOM_TYPE_KEY
+
 # ====== パス（ここだけ調整） ======
 MODEL_PATH = Path("results/20250908/BaTiO3/best_model.pth")
 TRAIN_YAML = Path("configs/BaTiO3.yaml")
